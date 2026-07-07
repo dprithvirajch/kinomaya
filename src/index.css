@@ -141,14 +141,28 @@ ul {
 .page-container {
   flex: 1;
   overflow-y: auto;
-  padding-bottom: 80px; /* Space for bottom nav */
-  scrollbar-width: none; /* Firefox */
+  padding-bottom: 80px; /* Space for bottom nav on mobile */
+  scrollbar-width: none;
   position: relative;
   z-index: 1;
 }
 
 .page-container::-webkit-scrollbar {
-  display: none; /* Safari and Chrome */
+  display: none;
+}
+
+@media (min-width: 768px) {
+  #root {
+    max-width: 100%;
+    flex-direction: row;
+    box-shadow: none;
+  }
+  
+  .page-container {
+    padding-bottom: 0;
+    margin-left: 240px; /* Space for desktop sidebar */
+    padding: 2rem 4rem;
+  }
 }
 
 /* Components Utilities */

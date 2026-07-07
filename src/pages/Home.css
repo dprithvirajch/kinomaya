@@ -101,3 +101,12 @@
 .fab-ai:active {
   transform: scale(0.95);
 }
+
+@media (min-width: 768px) {
+  .fab-ai {
+    bottom: 2rem;
+    right: 2rem;
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+  }
+}

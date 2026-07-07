@@ -46,3 +46,32 @@
   stroke-width: 2.5;
   filter: drop-shadow(0 0 8px rgba(244, 63, 94, 0.4));
 }
+
+@media (min-width: 768px) {
+  .bottom-nav {
+    top: 0;
+    right: auto;
+    width: 240px;
+    height: 100vh;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 4rem;
+    padding-bottom: 0;
+    border-top: none;
+    border-right: 1px solid var(--color-bg-surface-elevated);
+    gap: 2rem;
+  }
+  
+  .nav-item {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 1rem 2rem;
+    gap: 1rem;
+  }
+  
+  .nav-item span {
+    font-size: 1.1rem;
+  }
+}

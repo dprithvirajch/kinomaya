@@ -193,3 +193,14 @@
 .credits strong {
   color: var(--color-text-primary);
 }
+
+@media (min-width: 768px) {
+  .hero-content, .detail-body {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .detail-hero {
+    height: 55vh;
+  }
+}
