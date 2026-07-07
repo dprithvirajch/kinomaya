@@ -41,7 +41,7 @@ const Home = () => {
       const [trendData, indianData, gemsData, relatedData, theatersData] = await Promise.all([
         fetchTrending(1),
         fetchIndianReleases(),
-        fetchByMood('mystery', Math.floor(Math.random() * 3) + 1),
+        fetchByMood('thriller', 1),
         fetchByMood('comedy', Math.floor(Math.random() * 3) + 1),
         fetchInTheaters()
       ]);

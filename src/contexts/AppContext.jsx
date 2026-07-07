@@ -3,12 +3,19 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  const [isOnboarded, setIsOnboarded] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isOnboarded, setIsOnboarded] = useState(() => {
+    return localStorage.getItem('cinemood_user') !== null;
+  });
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem('cinemood_auth') === 'true';
+  });
 
-  const [user, setUser] = useState({
-    preferences: null,
-    stats: { streak: 4, points: 1250, moviesWatched: 12 }
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem('cinemood_user');
+    return saved ? JSON.parse(saved) : {
+      preferences: null,
+      stats: { streak: 4, points: 1250, moviesWatched: 12, level: '🍿 Popcorn Novice' }
+    };
   });
 
   const [watchlist, setWatchlist] = useState([
@@ -30,16 +37,9 @@ export const AppProvider = ({ children }) => {
     }
   ]);
 
-  // Check local storage on mount
+  // Check local storage on mount (now handled by lazy init, but kept for side-effects if needed)
   useEffect(() => {
-    const savedAuth = localStorage.getItem('cinemood_auth');
-    if (savedAuth) setIsAuthenticated(true);
-    
-    const saved = localStorage.getItem('cinemood_user');
-    if (saved) {
-      setUser(JSON.parse(saved));
-      setIsOnboarded(true);
-    }
+    // Left empty since state is initialized synchronously now
   }, []);
 
   const authenticateUser = () => {
