@@ -34,8 +34,37 @@ const Home = () => {
   });
   const [moodMovies, setMoodMovies] = useState([]);
   const [showTour, setShowTour] = useState(false);
-
   const [staticLoaded, setStaticLoaded] = useState(false);
+  const [refreshing, setRefreshing] = useState(null);
+
+  const handleRefresh = async (section) => {
+    setRefreshing(section);
+    const randomPage = Math.floor(Math.random() * 5) + 2;
+    try {
+      if (section === 'mood') {
+        const data = await fetchByMood(activeMood, randomPage);
+        setMoodMovies(data);
+      } else if (section === 'trending') {
+        const data = await fetchTrending(randomPage);
+        setTrending(data.filter(m => !m.whereToWatch.includes('Unavailable')));
+      } else if (section === 'indian') {
+        const data = await fetchIndianReleases(randomPage);
+        setIndian(data.filter(m => !m.whereToWatch.includes('Unavailable')));
+      } else if (section === 'gems') {
+        const data = await fetchByMood('thriller', randomPage);
+        setGems(data);
+      } else if (section === 'laugh') {
+        const data = await fetchByMood('comedy', randomPage);
+        setRelated(data);
+      } else if (section === 'theaters') {
+        const data = await fetchInTheaters(randomPage);
+        setTheaters(data);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    setRefreshing(null);
+  };
 
   // 1. Load static sections ONCE when the component mounts
   useEffect(() => {
@@ -142,6 +171,8 @@ const Home = () => {
               title="" 
               items={moodMovies.slice(0, 8)} 
               highlight={true}
+              onRefresh={() => handleRefresh('mood')}
+              isRefreshing={refreshing === 'mood'}
             />
           </div>
         )}
@@ -151,6 +182,8 @@ const Home = () => {
             title="🔥 Global Trending on OTT" 
             items={trending} 
             highlight={true}
+            onRefresh={() => handleRefresh('trending')}
+            isRefreshing={refreshing === 'trending'}
           />
         </div>
         
@@ -158,6 +191,8 @@ const Home = () => {
           <ContentRow 
             title="Top Indian Streams" 
             items={indian} 
+            onRefresh={() => handleRefresh('indian')}
+            isRefreshing={refreshing === 'indian'}
           />
         </div>
         
@@ -170,6 +205,8 @@ const Home = () => {
           <ContentRow 
             title="Hidden Gems for Your Taste" 
             items={gems} 
+            onRefresh={() => handleRefresh('gems')}
+            isRefreshing={refreshing === 'gems'}
           />
         </div>
 
@@ -177,12 +214,16 @@ const Home = () => {
           <ContentRow 
             title="Because You Need a Laugh" 
             items={related} 
+            onRefresh={() => handleRefresh('laugh')}
+            isRefreshing={refreshing === 'laugh'}
           />
         </div>
 
         <ContentRow 
           title="🍿 Now in Theaters" 
           items={theaters} 
+          onRefresh={() => handleRefresh('theaters')}
+          isRefreshing={refreshing === 'theaters'}
         />
       </div>
 

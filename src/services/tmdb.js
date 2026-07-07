@@ -55,11 +55,11 @@ export const fetchTrending = async (page = 1) => {
   }
 };
 
-export const fetchIndianReleases = async () => {
+export const fetchIndianReleases = async (page = 1) => {
   try {
     const [movies, tv] = await Promise.all([
-      fetchFromTMDB('/discover/movie?with_original_language=hi|ta|te|ml|kn&sort_by=popularity.desc&region=IN&with_watch_monetization_types=flatrate|free|ads&watch_region=IN'),
-      fetchFromTMDB('/discover/tv?with_original_language=hi|ta|te|ml|kn&sort_by=popularity.desc&watch_region=IN&with_watch_monetization_types=flatrate|free|ads')
+      fetchFromTMDB(`/discover/movie?with_original_language=hi|ta|te|ml|kn&sort_by=popularity.desc&page=${page}&region=IN&with_watch_monetization_types=flatrate|free|ads&watch_region=IN`),
+      fetchFromTMDB(`/discover/tv?with_original_language=hi|ta|te|ml|kn&sort_by=popularity.desc&page=${page}&watch_region=IN&with_watch_monetization_types=flatrate|free|ads`)
     ]);
     
     // Mix movies and TV shows
@@ -77,9 +77,9 @@ export const fetchIndianReleases = async () => {
   }
 };
 
-export const fetchInTheaters = async () => {
+export const fetchInTheaters = async (page = 1) => {
   try {
-    const data = await fetchFromTMDB('/movie/now_playing?region=IN');
+    const data = await fetchFromTMDB(`/movie/now_playing?region=IN&page=${page}`);
     const enriched = await formatAndEnrichTMDBResults(data.results);
     // Force 'In Theaters' tag for these
     return enriched.map(item => ({

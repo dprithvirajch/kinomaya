@@ -1,16 +1,30 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Star } from 'lucide-react';
+import { Star, RefreshCw } from 'lucide-react';
 import './ContentRow.css';
 
-const ContentRow = ({ title, items, highlight = false }) => {
+const ContentRow = ({ title, items, highlight = false, onRefresh, isRefreshing = false }) => {
   const navigate = useNavigate();
 
   if (!items || items.length === 0) return null;
 
   return (
     <div className={`content-row-section ${highlight ? 'highlight-section' : ''}`}>
-      {title && <h3 className="section-title">{title}</h3>}
+      {title && (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingRight: 'var(--spacing-4)', marginBottom: 'var(--spacing-4)' }}>
+          <h3 className="section-title" style={{ marginBottom: 0 }}>{title}</h3>
+          {onRefresh && (
+            <button 
+              onClick={onRefresh} 
+              disabled={isRefreshing}
+              style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--color-accent-secondary)', fontSize: '0.75rem', fontWeight: 700 }}
+            >
+              <RefreshCw size={14} className={isRefreshing ? 'spin' : ''} />
+              Refresh
+            </button>
+          )}
+        </div>
+      )}
       <div className="content-scroll">
         {items.map(item => (
           <div 
