@@ -59,7 +59,7 @@ const Home = () => {
       // Check if tour has been seen
       const hasSeenTour = localStorage.getItem('cinemood_tour_seen');
       if (!hasSeenTour) {
-        setTimeout(() => setShowTour(true), 1500);
+        setTimeout(() => setShowTour(true), 500);
       }
     };
     loadStatic();
