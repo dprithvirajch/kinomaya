@@ -58,8 +58,8 @@ export const fetchTrending = async (page = 1) => {
 export const fetchIndianReleases = async () => {
   try {
     const [movies, tv] = await Promise.all([
-      fetchFromTMDB('/discover/movie?with_original_language=hi|ta|te|ml|kn&sort_by=popularity.desc&region=IN&with_watch_monetization_types=flatrate|rent|buy&watch_region=IN'),
-      fetchFromTMDB('/discover/tv?with_original_language=hi|ta|te|ml|kn&sort_by=popularity.desc&watch_region=IN&with_watch_monetization_types=flatrate|rent|buy')
+      fetchFromTMDB('/discover/movie?with_original_language=hi|ta|te|ml|kn&sort_by=popularity.desc&region=IN&with_watch_monetization_types=flatrate|free|ads&watch_region=IN'),
+      fetchFromTMDB('/discover/tv?with_original_language=hi|ta|te|ml|kn&sort_by=popularity.desc&watch_region=IN&with_watch_monetization_types=flatrate|free|ads')
     ]);
     
     // Mix movies and TV shows
@@ -110,8 +110,8 @@ export const fetchByMood = async (mood, page = 1) => {
       // For "Surprise Me" or unmatched, mix random global trending with random regional
       const randomPage = Math.floor(Math.random() * 5) + 1;
       const [globalData, regionalData] = await Promise.all([
-        fetchFromTMDB(`/trending/movie/week?page=${randomPage}`),
-        fetchFromTMDB(`/discover/movie?with_original_language=hi|ta|te|ml|kn&sort_by=popularity.desc&page=${randomPage}`)
+        fetchFromTMDB(`/discover/movie?sort_by=popularity.desc&page=${randomPage}&watch_region=IN&with_watch_monetization_types=flatrate|free|ads`),
+        fetchFromTMDB(`/discover/movie?with_original_language=hi|ta|te|ml|kn&sort_by=popularity.desc&page=${randomPage}&watch_region=IN&with_watch_monetization_types=flatrate|free|ads`)
       ]);
       const mixed = [];
       const maxLen = Math.max(globalData.results?.length || 0, regionalData.results?.length || 0);
@@ -122,10 +122,10 @@ export const fetchByMood = async (mood, page = 1) => {
       return await formatAndEnrichTMDBResults(mixed);
     }
     
-    // Force streaming availability and mix global + regional
+    // Force strict streaming availability (Netflix, Prime, etc.) to avoid theatrical PVODs
     const [globalData, regionalData] = await Promise.all([
-      fetchFromTMDB(`/discover/movie?with_genres=${genreQuery}&sort_by=popularity.desc&page=${page}&watch_region=IN&with_watch_monetization_types=flatrate|rent|buy`),
-      fetchFromTMDB(`/discover/movie?with_genres=${genreQuery}&with_original_language=hi|ta|te|ml|kn&sort_by=popularity.desc&page=${page}&watch_region=IN&with_watch_monetization_types=flatrate|rent|buy`)
+      fetchFromTMDB(`/discover/movie?with_genres=${genreQuery}&sort_by=popularity.desc&page=${page}&watch_region=IN&with_watch_monetization_types=flatrate|free|ads`),
+      fetchFromTMDB(`/discover/movie?with_genres=${genreQuery}&with_original_language=hi|ta|te|ml|kn&sort_by=popularity.desc&page=${page}&watch_region=IN&with_watch_monetization_types=flatrate|free|ads`)
     ]);
 
     const mixed = [];
