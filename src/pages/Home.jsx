@@ -1,0 +1,191 @@
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAppContext } from '../contexts/AppContext';
+import { Flame, Sparkles } from 'lucide-react';
+import ContentRow from '../components/ContentRow';
+import SpotlightCard from '../components/SpotlightCard';
+import AppTour from '../components/AppTour';
+import { fetchTrending, fetchByMood, fetchIndianReleases, fetchInTheaters } from '../services/tmdb';
+import { trackEvent } from '../services/analytics';
+import './Home.css';
+
+const MOODS = [
+  { name: 'Chill', emoji: '🛋️' },
+  { name: 'Intense', emoji: '😳' },
+  { name: 'Funny', emoji: '🤪' },
+  { name: 'Emotional', emoji: '🥺' },
+  { name: 'Smart', emoji: '🧠' },
+  { name: 'Spooky', emoji: '🎃' },
+  { name: 'Romantic', emoji: '🥰' },
+  { name: 'Surprise Me', emoji: '✨' }
+];
+
+const Home = () => {
+  const navigate = useNavigate();
+  const { user } = useAppContext();
+  const [trending, setTrending] = useState([]);
+  const [indian, setIndian] = useState([]);
+  const [gems, setGems] = useState([]);
+  const [related, setRelated] = useState([]);
+  const [theaters, setTheaters] = useState([]);
+  
+  const [activeMood, setActiveMood] = useState('Surprise Me');
+  const [moodMovies, setMoodMovies] = useState([]);
+  const [showTour, setShowTour] = useState(false);
+
+  const [staticLoaded, setStaticLoaded] = useState(false);
+
+  // 1. Load static sections ONCE when the component mounts
+  useEffect(() => {
+    const loadStatic = async () => {
+      const [trendData, indianData, gemsData, relatedData, theatersData] = await Promise.all([
+        fetchTrending(1),
+        fetchIndianReleases(),
+        fetchByMood('mystery', Math.floor(Math.random() * 3) + 1),
+        fetchByMood('comedy', Math.floor(Math.random() * 3) + 1),
+        fetchInTheaters()
+      ]);
+      
+      const streamableTrending = trendData.filter(m => !m.whereToWatch.includes('Unavailable'));
+      
+      setTrending(streamableTrending.length >= 5 ? streamableTrending : trendData);
+      setIndian(indianData.filter(m => !m.whereToWatch.includes('Unavailable')));
+      setGems(gemsData);
+      setRelated(relatedData);
+      setTheaters(theatersData);
+      setStaticLoaded(true);
+      
+      // Temporarily clear the flag so you can test the tour!
+      localStorage.removeItem('cinemood_tour_seen');
+
+      // Check if tour has been seen
+      const hasSeenTour = localStorage.getItem('cinemood_tour_seen');
+      if (!hasSeenTour) {
+        setTimeout(() => setShowTour(true), 1500);
+      }
+    };
+    loadStatic();
+  }, []);
+
+  // 2. Load ONLY the active mood section when the pill is tapped
+  useEffect(() => {
+    const loadMood = async () => {
+      const moodData = await fetchByMood(activeMood);
+      setMoodMovies(moodData);
+    };
+    loadMood();
+  }, [activeMood]);
+
+  if (!staticLoaded) return <div className="home-container fade-in"><p style={{padding: '2rem', textAlign: 'center', color: 'var(--color-text-secondary)'}}>Loading recommendations...</p></div>;
+
+  const handleCompleteTour = () => {
+    setShowTour(false);
+    localStorage.setItem('cinemood_tour_seen', 'true');
+    trackEvent('Tour Completed');
+  };
+
+  const handleMoodSelect = (moodName) => {
+    setActiveMood(moodName);
+    trackEvent('Mood Selected', { mood: moodName });
+  };
+
+  return (
+    <div className="home-container fade-in">
+      {showTour && <AppTour onComplete={handleCompleteTour} />}
+      <header className="home-header">
+        <div className="header-top">
+          <div className="greeting-area">
+            <h1 className="greeting">What's the vibe tonight?</h1>
+            <p className="subtitle">Let's find something good.</p>
+          </div>
+          <div className="stats-widget" onClick={() => navigate('/profile')}>
+            <div className="streak-badge">
+              <Flame size={16} color="var(--color-accent-primary)" fill="var(--color-accent-primary)" />
+              <span>{user.stats.streak}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="mood-scroll">
+          {MOODS.map(mood => (
+            <button 
+              key={mood.name} 
+              className={`mood-pill ${activeMood === mood.name ? 'active' : ''}`}
+              onClick={() => handleMoodSelect(mood.name)}
+            >
+              <span>{mood.emoji}</span> {mood.name}
+            </button>
+          ))}
+        </div>
+      </header>
+
+      <div className="home-content">
+        {moodMovies.length > 0 && (
+          <div className="mood-highlight-section">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingRight: 'var(--spacing-4)' }}>
+              <h3 className="section-title">Because you are feeling {activeMood}</h3>
+              <button 
+                className="btn-secondary" 
+                style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem' }}
+                onClick={() => navigate('/discover', { state: { mood: activeMood } })}
+              >
+                Swipe Mode →
+              </button>
+            </div>
+            <ContentRow 
+              title="" 
+              items={moodMovies} 
+              highlight={true}
+            />
+          </div>
+        )}
+
+        <div id="tour-trending">
+          <ContentRow 
+            title="🔥 Global Trending on OTT" 
+            items={trending} 
+            highlight={true}
+          />
+        </div>
+        
+        <div id="tour-indian">
+          <ContentRow 
+            title="Top Indian Streams" 
+            items={indian} 
+          />
+        </div>
+        
+        <div id="tour-tonight">
+          <h3 className="section-title">Tonight for You</h3>
+          {trending[4] && <SpotlightCard item={trending[4]} />}
+        </div>
+
+        <div id="tour-gems">
+          <ContentRow 
+            title="Hidden Gems for Your Taste" 
+            items={gems} 
+          />
+        </div>
+
+        <div id="tour-laugh">
+          <ContentRow 
+            title="Because You Need a Laugh" 
+            items={related} 
+          />
+        </div>
+
+        <ContentRow 
+          title="🍿 Now in Theaters" 
+          items={theaters} 
+        />
+      </div>
+
+      <button className="fab-ai" onClick={() => navigate('/companion')}>
+        <Sparkles size={24} color="white" />
+        <span>Ask AI</span>
+      </button>
+    </div>
+  );
+};
+
+export default Home;

@@ -1,0 +1,110 @@
+.tour-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: auto; /* blocks interactions with the underlying app */
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.tour-highlight {
+  position: absolute;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 0 0 9999px rgba(2, 6, 23, 0.85); /* Dark cinematic overlay */
+  border: 2px solid var(--color-accent-secondary);
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  background: transparent;
+  pointer-events: none;
+  z-index: 10000;
+}
+
+.tour-popover {
+  position: absolute;
+  background: var(--color-bg-surface-elevated);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  padding: var(--spacing-4);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(6, 182, 212, 0.15);
+  z-index: 10001;
+  max-width: 400px;
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.tour-close {
+  position: absolute;
+  top: var(--spacing-2);
+  right: var(--spacing-2);
+  color: var(--color-text-tertiary);
+  background: none;
+  border: none;
+  padding: var(--spacing-1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tour-close:hover {
+  color: var(--color-text-primary);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.tour-popover h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin-bottom: var(--spacing-2);
+  color: var(--color-text-primary);
+  background: linear-gradient(to right, var(--color-accent-secondary), #fff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.tour-popover p {
+  font-size: 0.95rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin-bottom: var(--spacing-5);
+}
+
+.tour-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tour-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.tour-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-text-tertiary);
+  transition: all 0.3s ease;
+}
+
+.tour-dot.active {
+  background: var(--color-accent-secondary);
+  width: 16px;
+  border-radius: 4px;
+}
+
+.tour-next-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(135deg, var(--color-accent-secondary), var(--color-accent-secondary-hover));
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+}
+
+.tour-next-btn:active {
+  transform: scale(0.95);
+}

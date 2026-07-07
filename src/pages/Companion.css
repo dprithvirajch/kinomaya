@@ -1,0 +1,172 @@
+.companion-container {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  background-color: var(--color-bg-base);
+  background-image: radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
+}
+
+.companion-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-4);
+  padding-top: max(env(safe-area-inset-top, var(--spacing-4)), var(--spacing-4));
+  border-bottom: 1px solid var(--color-bg-surface-elevated);
+  position: relative;
+  background: rgba(2, 6, 23, 0.8);
+  backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+.back-btn-comp {
+  position: absolute;
+  left: var(--spacing-4);
+  background: transparent;
+}
+
+.companion-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+
+.companion-chat-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.chat-bubble {
+  max-width: 85%;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-xl);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  animation: slideUp 0.3s ease forwards;
+}
+
+.chat-bubble.ai {
+  align-self: flex-start;
+  background: var(--color-bg-surface-elevated);
+  color: var(--color-text-primary);
+  border-bottom-left-radius: 4px;
+}
+
+.chat-bubble.user {
+  align-self: flex-end;
+  background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-primary-hover));
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.loading-bubble {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  color: var(--color-text-secondary);
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.companion-suggestions {
+  margin-top: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.companion-suggestions .spotlight-card {
+  margin: 0; /* Override spotlight margin for chat */
+}
+
+.companion-input-area {
+  padding: var(--spacing-4);
+  padding-bottom: max(env(safe-area-inset-bottom, var(--spacing-4)), var(--spacing-4));
+  background: var(--color-bg-surface);
+  border-top: 1px solid var(--color-bg-surface-elevated);
+}
+
+.quick-prompts {
+  display: flex;
+  gap: var(--spacing-2);
+  overflow-x: auto;
+  padding-bottom: var(--spacing-3);
+  scrollbar-width: none;
+}
+.quick-prompts::-webkit-scrollbar {
+  display: none;
+}
+
+.quick-prompt-btn {
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--radius-full);
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.quick-prompt-btn:active {
+  transform: scale(0.95);
+  background: rgba(6, 182, 212, 0.2);
+  border-color: var(--color-accent-secondary);
+}
+
+.companion-form {
+  display: flex;
+  gap: var(--spacing-2);
+  background: var(--color-bg-base);
+  border: 1px solid var(--color-bg-surface-elevated);
+  padding: var(--spacing-1) var(--spacing-1) var(--spacing-1) var(--spacing-4);
+  border-radius: var(--radius-full);
+}
+
+.companion-form input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--color-text-primary);
+  font-size: 1rem;
+  outline: none;
+}
+
+.companion-form input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.send-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-accent-secondary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.send-btn:disabled {
+  background: var(--color-bg-surface-elevated);
+  color: var(--color-text-tertiary);
+}
+
+.send-btn:not(:disabled):active {
+  transform: scale(0.9);
+}
