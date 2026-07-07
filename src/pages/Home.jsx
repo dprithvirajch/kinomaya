@@ -29,7 +29,9 @@ const Home = () => {
   const [related, setRelated] = useState([]);
   const [theaters, setTheaters] = useState([]);
   
-  const [activeMood, setActiveMood] = useState('Surprise Me');
+  const [activeMood, setActiveMood] = useState(() => {
+    return localStorage.getItem('cinemood_active_mood') || 'Surprise Me';
+  });
   const [moodMovies, setMoodMovies] = useState([]);
   const [showTour, setShowTour] = useState(false);
 
@@ -84,6 +86,7 @@ const Home = () => {
 
   const handleMoodSelect = (moodName) => {
     setActiveMood(moodName);
+    localStorage.setItem('cinemood_active_mood', moodName);
     trackEvent('Mood Selected', { mood: moodName });
   };
 
