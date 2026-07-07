@@ -123,19 +123,24 @@ const Home = () => {
       <div className="home-content">
         {moodMovies.length > 0 && (
           <div className="mood-highlight-section">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingRight: 'var(--spacing-4)' }}>
-              <h3 className="section-title">Because you are feeling {activeMood}</h3>
-              <button 
-                className="btn-secondary" 
-                style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem' }}
-                onClick={() => navigate('/discover', { state: { mood: activeMood } })}
-              >
-                Swipe Mode →
-              </button>
+            <h3 className="section-title">Because you are feeling {activeMood}</h3>
+            
+            <div 
+              className="discovery-cta-card fade-in"
+              onClick={() => navigate('/discover', { state: { mood: activeMood } })}
+            >
+              <div className="cta-content">
+                <h4>Play Matchmaker 🎯</h4>
+                <p>Swipe through {activeMood} titles to train your algorithm and earn points!</p>
+              </div>
+              <div className="cta-icon">
+                <Sparkles size={24} />
+              </div>
             </div>
+
             <ContentRow 
               title="" 
-              items={moodMovies} 
+              items={moodMovies.slice(0, 8)} 
               highlight={true}
             />
           </div>

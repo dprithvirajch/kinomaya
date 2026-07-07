@@ -81,6 +81,51 @@
   padding-bottom: var(--spacing-4);
 }
 
+.discovery-cta-card {
+  margin: 0 var(--spacing-4) var(--spacing-4);
+  padding: var(--spacing-4);
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.15) 0%, rgba(6, 182, 212, 0.15) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+
+.discovery-cta-card:active {
+  transform: scale(0.98);
+}
+
+.cta-content h4 {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  margin-bottom: 4px;
+}
+
+.cta-content p {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  line-height: 1.3;
+}
+
+.cta-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-secondary));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+  margin-left: var(--spacing-3);
+  box-shadow: 0 4px 15px rgba(244, 63, 94, 0.4);
+}
+
 .fab-ai {
   position: fixed;
   bottom: 100px; /* Above bottom nav */
