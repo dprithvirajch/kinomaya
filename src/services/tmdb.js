@@ -27,26 +27,7 @@ const GENRE_MAP = {
 const formatAndEnrichTMDBResults = async (results) => {
   const topResults = results.slice(0, 20);
   
-  const enrichedResults = await Promise.all(topResults.map(async (item) => {
-    let providers = [];
-    try {
-      const type = item.media_type === 'tv' || item.first_air_date ? 'tv' : 'movie';
-      const providerData = await fetchFromTMDB(`/${type}/${item.id}/watch/providers`);
-      
-      let targetRegion = providerData.results?.IN ? providerData.results.IN : providerData.results?.US;
-      
-      if (targetRegion) {
-        const allProviders = [
-          ...(targetRegion.flatrate || []),
-          ...(targetRegion.rent || []),
-          ...(targetRegion.buy || [])
-        ];
-        providers = [...new Set(allProviders.map(p => p.provider_name))];
-      }
-    } catch (e) {
-      console.warn(`Could not fetch providers for ${item.id}`);
-    }
-
+  const enrichedResults = topResults.map((item) => {
     return {
       id: item.id,
       title: item.title || item.name,
@@ -56,10 +37,10 @@ const formatAndEnrichTMDBResults = async (results) => {
       backdrop: item.backdrop_path ? `https://image.tmdb.org/t/p/w780${item.backdrop_path}` : null,
       genres: (item.genre_ids || []).map(id => GENRE_MAP[id]).filter(Boolean),
       overview: item.overview,
-      whereToWatch: providers.length > 0 ? providers.slice(0, 2) : ['Unavailable'],
+      whereToWatch: ['Tap to View'],
       mediaType: item.media_type || (item.first_air_date ? 'tv' : 'movie')
     };
-  }));
+  });
 
   return enrichedResults.filter(item => item.poster);
 };
