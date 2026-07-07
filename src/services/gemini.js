@@ -46,7 +46,7 @@ export const getAIRecommendations = async (prompt, userContext = {}) => {
     
     let envContext = `Time of Day: ${timeString}. Day of Week: ${dayString}.`;
 
-    const contextStr = `User Preferences - Genres: ${userContext.genres?.join(',') || 'Any'}. Moods: ${userContext.moods?.join(',') || 'Any'}.\nEnvironment: ${envContext}`;
+    const contextStr = `User Preferences - Genres: ${userContext?.genres?.join(',') || 'Any'}. Moods: ${userContext?.moods?.join(',') || 'Any'}.\nEnvironment: ${envContext}`;
     
     const fullPrompt = `Context:\n${contextStr}\n\nUser Request: ${prompt}`;
     

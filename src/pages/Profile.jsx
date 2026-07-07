@@ -25,8 +25,8 @@ const Profile = () => {
             <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=60" alt="User Avatar" />
           </div>
           <div className="user-info">
-            <h1>Alex Watcher</h1>
-            <p className="level-text">{user.stats.level}</p>
+            <h1>{user.preferences?.name || "Cinephile"}</h1>
+            <p className="level-text">{user.stats.level || 'Novice'}</p>
           </div>
         </div>
       </header>

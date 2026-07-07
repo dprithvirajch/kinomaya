@@ -54,9 +54,7 @@ const Home = () => {
       setRelated(relatedData);
       setTheaters(theatersData);
       setStaticLoaded(true);
-      
-      // Temporarily clear the flag so you can test the tour!
-      localStorage.removeItem('cinemood_tour_seen');
+
 
       // Check if tour has been seen
       const hasSeenTour = localStorage.getItem('cinemood_tour_seen');

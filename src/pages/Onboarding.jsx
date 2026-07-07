@@ -5,7 +5,7 @@ import { ChevronRight, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import './Onboarding.css';
 
 const STEPS = {
-  AGE: 0,
+  NAME: 0,
   GENRES: 1,
   LANGUAGES: 2,
   MOODS: 3,
@@ -56,10 +56,10 @@ const TYPES = ['Movies 🍿', 'TV Shows 📺', 'Both ✨'];
 const Onboarding = () => {
   const navigate = useNavigate();
   const { completeOnboarding } = useAppContext();
-  const [step, setStep] = useState(STEPS.AGE);
+  const [step, setStep] = useState(STEPS.NAME);
   
   const [prefs, setPrefs] = useState({
-    dob: '',
+    name: '',
     genres: [],
     languages: [],
     moods: [],
@@ -93,16 +93,18 @@ const Onboarding = () => {
 
   const renderStepContent = () => {
     switch (step) {
-      case STEPS.AGE:
+      case STEPS.NAME:
         return (
           <div className="step-content fade-in">
-            <h2>When were you born?</h2>
-            <p className="subtitle">We use this to personalize your experience.</p>
+            <h2>What should we call you?</h2>
+            <p className="subtitle">We use this to personalize your profile.</p>
             <input 
-              type="date" 
-              className="date-input"
-              value={prefs.dob}
-              onChange={(e) => setPrefs({...prefs, dob: e.target.value})}
+              type="text" 
+              className="text-input"
+              placeholder="Your Name"
+              value={prefs.name}
+              onChange={(e) => setPrefs({...prefs, name: e.target.value})}
+              autoFocus
             />
           </div>
         );
@@ -194,7 +196,7 @@ const Onboarding = () => {
 
   const canProceed = () => {
     switch (step) {
-      case STEPS.AGE: return prefs.dob !== '';
+      case STEPS.NAME: return prefs.name.trim().length > 0;
       case STEPS.GENRES: return prefs.genres.length > 0;
       case STEPS.LANGUAGES: return prefs.languages.length > 0;
       case STEPS.MOODS: return prefs.moods.length > 0;
