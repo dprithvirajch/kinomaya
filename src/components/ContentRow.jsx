@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Star, RefreshCw } from 'lucide-react';
+import { Star, RefreshCw, ChevronRight } from 'lucide-react';
 import './ContentRow.css';
 
 const ContentRow = ({ title, items, highlight = false, onRefresh, isRefreshing = false }) => {
@@ -12,7 +12,10 @@ const ContentRow = ({ title, items, highlight = false, onRefresh, isRefreshing =
     <div className={`content-row-section ${highlight ? 'highlight-section' : ''}`}>
       {title && (
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingRight: 'var(--spacing-4)', marginBottom: 'var(--spacing-4)' }}>
-          <h3 className="section-title" style={{ marginBottom: 0 }}>{title}</h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <h3 className="section-title" style={{ marginBottom: 0 }}>{title}</h3>
+            <ChevronRight size={18} color="var(--color-text-secondary)" />
+          </div>
           {onRefresh && (
             <button 
               onClick={onRefresh} 

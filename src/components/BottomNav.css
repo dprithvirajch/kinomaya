@@ -17,6 +17,10 @@
   margin: 0 auto;
 }
 
+.desktop-logo {
+  display: none;
+}
+
 .nav-item {
   display: flex;
   flex-direction: column;
@@ -51,15 +55,28 @@
   .bottom-nav {
     top: 0;
     right: auto;
-    width: 240px;
+    width: 260px;
     height: 100vh;
     flex-direction: column;
     justify-content: flex-start;
-    padding-top: 4rem;
+    padding-top: 2.5rem;
     padding-bottom: 0;
     border-top: none;
-    border-right: 1px solid var(--color-bg-surface-elevated);
-    gap: 2rem;
+    border-right: 1px solid rgba(255,255,255,0.05);
+    background: linear-gradient(180deg, rgba(2,6,23,0.95) 0%, rgba(15,23,42,0.98) 100%);
+    gap: 1.5rem;
+  }
+  
+  .desktop-logo {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--color-text-primary);
+    padding: 0 2rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(to right, #fff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
   
   .nav-item {

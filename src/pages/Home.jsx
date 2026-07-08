@@ -95,7 +95,7 @@ const Home = () => {
 
       // Check if tour has been seen
       const hasSeenTour = localStorage.getItem('cinemood_tour_seen');
-      if (!hasSeenTour) {
+      if (!hasSeenTour && window.innerWidth < 768) {
         setTimeout(() => setShowTour(true), 500);
       }
     };

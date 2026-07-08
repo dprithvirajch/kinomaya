@@ -13,6 +13,7 @@ const BottomNav = () => {
 
   return (
     <nav className="bottom-nav slide-up">
+      <div className="desktop-logo">KinoMaya ✨</div>
       <NavLink to="/" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
         <Home size={24} />
         <span>Home</span>

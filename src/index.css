@@ -160,7 +160,7 @@ ul {
   
   .page-container {
     padding-bottom: 0;
-    margin-left: 240px; /* Space for desktop sidebar */
+    margin-left: 260px; /* Space for desktop sidebar */
     padding: 2rem 4rem;
   }
 }

@@ -140,8 +140,8 @@ export const fetchByMood = async (mood, page = 1) => {
       // For "Surprise Me" or unmatched, mix random global trending with random regional
       const randomPage = Math.floor(Math.random() * 5) + 1;
       const [globalData, regionalData] = await Promise.all([
-        fetchFromTMDB(`/discover/movie?sort_by=popularity.desc&page=${randomPage}&watch_region=IN&with_watch_monetization_types=flatrate|free|ads`),
-        fetchFromTMDB(`/discover/movie?with_original_language=hi|ta|te|ml|kn&sort_by=popularity.desc&page=${randomPage}&watch_region=IN&with_watch_monetization_types=flatrate|free|ads`)
+        fetchFromTMDB(`/discover/movie?sort_by=popularity.desc&page=${randomPage}&watch_region=IN&with_watch_monetization_types=flatrate|free|ads&primary_release_date.gte=2000-01-01`),
+        fetchFromTMDB(`/discover/movie?with_original_language=hi|ta|te|ml|kn&sort_by=popularity.desc&page=${randomPage}&watch_region=IN&with_watch_monetization_types=flatrate|free|ads&primary_release_date.gte=2000-01-01`)
       ]);
       const mixed = [];
       const maxLen = Math.max(globalData.results?.length || 0, regionalData.results?.length || 0);
@@ -154,8 +154,8 @@ export const fetchByMood = async (mood, page = 1) => {
     
     // Force strict streaming availability (Netflix, Prime, etc.) to avoid theatrical PVODs
     const [globalData, regionalData] = await Promise.all([
-      fetchFromTMDB(`/discover/movie?with_genres=${genreQuery}&sort_by=popularity.desc&page=${page}&watch_region=IN&with_watch_monetization_types=flatrate|free|ads`),
-      fetchFromTMDB(`/discover/movie?with_genres=${genreQuery}&with_original_language=hi|ta|te|ml|kn&sort_by=popularity.desc&page=${page}&watch_region=IN&with_watch_monetization_types=flatrate|free|ads`)
+      fetchFromTMDB(`/discover/movie?with_genres=${genreQuery}&sort_by=popularity.desc&page=${page}&watch_region=IN&with_watch_monetization_types=flatrate|free|ads&primary_release_date.gte=2000-01-01`),
+      fetchFromTMDB(`/discover/movie?with_genres=${genreQuery}&with_original_language=hi|ta|te|ml|kn&sort_by=popularity.desc&page=${page}&watch_region=IN&with_watch_monetization_types=flatrate|free|ads&primary_release_date.gte=2000-01-01`)
     ]);
 
     const mixed = [];
