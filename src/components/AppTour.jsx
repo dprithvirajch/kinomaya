@@ -108,13 +108,13 @@ const AppTour = ({ onComplete }) => {
   const step = TOUR_STEPS[currentStep];
 
   // Calculate popover position based on target and step.position
-  let popoverStyle = {};
+  let popoverStyle = { maxWidth: '400px' };
   if (step.position === 'bottom') {
-    popoverStyle = { top: targetRect.top + targetRect.height + 24, left: '50%', transform: 'translateX(-50%)', width: '90%' };
+    popoverStyle = { ...popoverStyle, top: targetRect.top + targetRect.height + 24, left: '50%', transform: 'translateX(-50%)', width: '90%' };
   } else if (step.position === 'top') {
-    popoverStyle = { top: targetRect.top - 24, left: '50%', transform: 'translate(-50%, -100%)', width: '90%' };
+    popoverStyle = { ...popoverStyle, top: targetRect.top - 24, left: '50%', transform: 'translate(-50%, -100%)', width: '90%' };
   } else if (step.position === 'top-left') {
-    popoverStyle = { top: targetRect.top - 24, right: window.innerWidth - targetRect.right, transform: 'translateY(-100%)', width: '280px' };
+    popoverStyle = { ...popoverStyle, top: targetRect.top - 24, right: window.innerWidth - targetRect.right, transform: 'translateY(-100%)', width: '280px' };
   }
 
   return (

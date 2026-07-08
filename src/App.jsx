@@ -33,10 +33,15 @@ const AuthGate = ({ children }) => {
   return children;
 };
 
+import { useLocation } from 'react-router-dom';
+
 const AppContent = () => {
+  const location = useLocation();
+  const hideSidebar = ['/discover', '/splash', '/onboarding', '/auth'].includes(location.pathname) || location.pathname.startsWith('/title/');
+
   return (
-    <Router>
-      <div className="page-container">
+    <>
+      <div className={`page-container ${hideSidebar ? 'no-sidebar' : ''}`}>
         <Routes>
           <Route path="/auth" element={<Auth />} />
           <Route path="/splash" element={<AuthGate><Splash /></AuthGate>} />
@@ -93,15 +98,17 @@ const AppContent = () => {
         </Routes>
       </div>
       <BottomNav />
-    </Router>
+    </>
   );
 };
 
 const App = () => {
   return (
-    <AppProvider>
-      <AppContent />
-    </AppProvider>
+    <Router>
+      <AppProvider>
+        <AppContent />
+      </AppProvider>
+    </Router>
   );
 };
 

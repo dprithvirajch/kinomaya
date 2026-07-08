@@ -86,3 +86,14 @@
   color: var(--color-text-secondary);
   line-height: 1.5;
 }
+
+@media (min-width: 768px) {
+  .spotlight-card {
+    max-width: 800px;
+    margin: 0 auto var(--spacing-8);
+  }
+  
+  .spotlight-image-container {
+    aspect-ratio: 21/9;
+  }
+}

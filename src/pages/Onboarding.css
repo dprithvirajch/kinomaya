@@ -272,3 +272,14 @@
 .onboarding-footer {
   padding-bottom: max(env(safe-area-inset-bottom, var(--spacing-6)), var(--spacing-6));
 }
+
+@media (min-width: 768px) {
+  .onboarding-container {
+    max-width: 600px;
+    margin: 0 auto;
+    border-radius: var(--radius-2xl);
+    box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    height: 90vh;
+    margin-top: 5vh;
+  }
+}
