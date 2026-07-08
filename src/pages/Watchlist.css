@@ -23,6 +23,19 @@
   gap: var(--spacing-4);
 }
 
+@media (min-width: 768px) {
+  .watchlist-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .watchlist-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: var(--spacing-5);
+  }
+}
+
 .watchlist-card {
   display: flex;
   flex-direction: column;
