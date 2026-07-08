@@ -17,9 +17,18 @@
   scrollbar-width: none;
   scroll-snap-type: x mandatory;
   align-items: flex-start;
+  scroll-behavior: smooth;
 }
 
 .content-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll-wrapper {
+  position: relative;
+}
+
+.scroll-btn {
   display: none;
 }
 
@@ -85,10 +94,44 @@
 
 @media (min-width: 1024px) {
   .content-card {
-    width: 200px; /* Larger posters on desktop */
+    flex: 0 0 150px;
+    width: 150px; /* Reduced from 200px to match IMDB style */
   }
   .content-scroll {
-    gap: var(--spacing-5);
+    gap: var(--spacing-4);
+  }
+
+  .scroll-btn {
+    display: flex;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-80%);
+    width: 40px;
+    height: 40px;
+    background: rgba(2, 6, 23, 0.8);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    transition: all 0.2s;
+  }
+
+  .scroll-btn:hover {
+    background: var(--color-accent-primary);
+    transform: translateY(-80%) scale(1.1);
+  }
+
+  .scroll-btn.left {
+    left: var(--spacing-2);
+  }
+
+  .scroll-btn.right {
+    right: var(--spacing-2);
   }
 }
 
