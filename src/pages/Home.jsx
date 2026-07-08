@@ -5,7 +5,7 @@ import { Flame, Sparkles } from 'lucide-react';
 import ContentRow from '../components/ContentRow';
 import SpotlightCard from '../components/SpotlightCard';
 import AppTour from '../components/AppTour';
-import { fetchTrending, fetchByMood, fetchIndianReleases, fetchInTheaters } from '../services/tmdb';
+import { fetchTrending, fetchByMood, fetchIndianReleases, fetchInTheaters, fetchNewOnOTT } from '../services/tmdb';
 import { trackEvent } from '../services/analytics';
 import './Home.css';
 
@@ -28,6 +28,7 @@ const Home = () => {
   const [gems, setGems] = useState([]);
   const [related, setRelated] = useState([]);
   const [theaters, setTheaters] = useState([]);
+  const [newReleases, setNewReleases] = useState([]);
   
   const [activeMood, setActiveMood] = useState(() => {
     return localStorage.getItem('cinemood_active_mood') || 'Surprise Me';
@@ -47,6 +48,9 @@ const Home = () => {
       } else if (section === 'trending') {
         const data = await fetchTrending(randomPage);
         setTrending(data.filter(m => !m.whereToWatch.includes('Unavailable')));
+      } else if (section === 'new') {
+        const data = await fetchNewOnOTT(randomPage);
+        setNewReleases(data);
       } else if (section === 'indian') {
         const data = await fetchIndianReleases(randomPage);
         setIndian(data.filter(m => !m.whereToWatch.includes('Unavailable')));
@@ -69,12 +73,13 @@ const Home = () => {
   // 1. Load static sections ONCE when the component mounts
   useEffect(() => {
     const loadStatic = async () => {
-      const [trendData, indianData, gemsData, relatedData, theatersData] = await Promise.all([
+      const [trendData, indianData, gemsData, relatedData, theatersData, newOnOTTData] = await Promise.all([
         fetchTrending(1),
         fetchIndianReleases(),
         fetchByMood('thriller', 1),
         fetchByMood('comedy', Math.floor(Math.random() * 3) + 1),
-        fetchInTheaters()
+        fetchInTheaters(),
+        fetchNewOnOTT(1)
       ]);
       
       const streamableTrending = trendData.filter(m => !m.whereToWatch.includes('Unavailable'));
@@ -84,6 +89,7 @@ const Home = () => {
       setGems(gemsData);
       setRelated(relatedData);
       setTheaters(theatersData);
+      setNewReleases(newOnOTTData);
       setStaticLoaded(true);
 
 
@@ -186,6 +192,13 @@ const Home = () => {
             isRefreshing={refreshing === 'trending'}
           />
         </div>
+
+        <ContentRow 
+          title="🆕 Fresh Drops this Week" 
+          items={newReleases} 
+          onRefresh={() => handleRefresh('new')}
+          isRefreshing={refreshing === 'new'}
+        />
         
         <div id="tour-indian">
           <ContentRow 

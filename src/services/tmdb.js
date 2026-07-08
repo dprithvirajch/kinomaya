@@ -55,6 +55,36 @@ export const fetchTrending = async (page = 1) => {
   }
 };
 
+export const fetchNewOnOTT = async (page = 1) => {
+  try {
+    // Get date strings for last 30 days to today
+    const today = new Date();
+    const lastMonth = new Date();
+    lastMonth.setDate(today.getDate() - 30);
+    
+    const todayStr = today.toISOString().split('T')[0];
+    const lastMonthStr = lastMonth.toISOString().split('T')[0];
+
+    // Fetch popular movies released in the last 30 days that are available on flatrate/free/ads in IN
+    const [movies, tv] = await Promise.all([
+      fetchFromTMDB(`/discover/movie?sort_by=popularity.desc&primary_release_date.gte=${lastMonthStr}&primary_release_date.lte=${todayStr}&with_watch_monetization_types=flatrate|free|ads&watch_region=IN&page=${page}`),
+      fetchFromTMDB(`/discover/tv?sort_by=popularity.desc&first_air_date.gte=${lastMonthStr}&first_air_date.lte=${todayStr}&with_watch_monetization_types=flatrate|free|ads&watch_region=IN&page=${page}`)
+    ]);
+
+    const mixed = [];
+    const maxLen = Math.max(movies.results?.length || 0, tv.results?.length || 0);
+    for (let i = 0; i < maxLen; i++) {
+      if (movies.results?.[i]) mixed.push(movies.results[i]);
+      if (tv.results?.[i]) mixed.push(tv.results[i]);
+    }
+
+    return await formatAndEnrichTMDBResults(mixed);
+  } catch (error) {
+    console.error('Failed to fetch new on OTT:', error);
+    return [];
+  }
+};
+
 export const fetchIndianReleases = async (page = 1) => {
   try {
     const [movies, tv] = await Promise.all([
