@@ -23,6 +23,12 @@ const DiscoveryDeck = () => {
   };
 
   useEffect(() => {
+    if (window.innerWidth >= 1024) {
+      navigate('/');
+    }
+  }, [navigate]);
+
+  useEffect(() => {
     const loadCards = async () => {
       // Fetch a random page (1 to 4) so users don't see the exact same cards every time
       const randomPage = Math.floor(Math.random() * 4) + 1;

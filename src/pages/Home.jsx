@@ -13,6 +13,8 @@ const MOODS = [
   { name: 'Chill', emoji: '🛋️' },
   { name: 'Intense', emoji: '😳' },
   { name: 'Funny', emoji: '🤪' },
+  { name: 'Action', emoji: '🔥' },
+  { name: 'Thriller', emoji: '🔪' },
   { name: 'Emotional', emoji: '🥺' },
   { name: 'Smart', emoji: '🧠' },
   { name: 'Spooky', emoji: '🎃' },
