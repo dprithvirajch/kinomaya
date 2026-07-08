@@ -95,7 +95,7 @@ const Home = () => {
 
       // Check if tour has been seen
       const hasSeenTour = localStorage.getItem('cinemood_tour_seen');
-      if (!hasSeenTour && window.innerWidth < 768) {
+      if (!hasSeenTour && window.innerWidth < 1024) {
         setTimeout(() => setShowTour(true), 500);
       }
     };
@@ -183,6 +183,13 @@ const Home = () => {
           </div>
         )}
 
+        <ContentRow 
+          title="🆕 Fresh Drops this Week" 
+          items={newReleases} 
+          onRefresh={() => handleRefresh('new')}
+          isRefreshing={refreshing === 'new'}
+        />
+
         <div id="tour-trending">
           <ContentRow 
             title="🔥 Global Trending on OTT" 
@@ -192,13 +199,6 @@ const Home = () => {
             isRefreshing={refreshing === 'trending'}
           />
         </div>
-
-        <ContentRow 
-          title="🆕 Fresh Drops this Week" 
-          items={newReleases} 
-          onRefresh={() => handleRefresh('new')}
-          isRefreshing={refreshing === 'new'}
-        />
         
         <div id="tour-indian">
           <ContentRow 

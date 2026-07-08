@@ -147,7 +147,7 @@
   transform: scale(0.95);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .fab-ai {
     bottom: 2rem;
     right: 2rem;

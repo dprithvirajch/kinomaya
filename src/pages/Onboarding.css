@@ -273,7 +273,7 @@
   padding-bottom: max(env(safe-area-inset-bottom, var(--spacing-6)), var(--spacing-6));
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .onboarding-container {
     max-width: 600px;
     margin: 0 auto;

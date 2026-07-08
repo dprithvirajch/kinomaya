@@ -87,7 +87,7 @@
   line-height: 1.5;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .spotlight-card {
     max-width: 800px;
     margin: 0 auto var(--spacing-8);

@@ -151,7 +151,7 @@ ul {
   display: none;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   #root {
     max-width: 100%;
     flex-direction: row;
@@ -162,6 +162,8 @@ ul {
     padding-bottom: 0;
     margin-left: 260px; /* Space for desktop sidebar */
     padding: 2rem 4rem;
+    position: relative;
+    z-index: 1;
   }
 }
 
