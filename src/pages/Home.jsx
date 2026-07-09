@@ -75,30 +75,34 @@ const Home = () => {
   // 1. Load static sections ONCE when the component mounts
   useEffect(() => {
     const loadStatic = async () => {
-      const [trendData, indianData, gemsData, relatedData, theatersData, newOnOTTData] = await Promise.all([
-        fetchTrending(1),
-        fetchIndianReleases(),
-        fetchByMood('thriller', 1),
-        fetchByMood('comedy', Math.floor(Math.random() * 3) + 1),
-        fetchInTheaters(),
-        fetchNewOnOTT(1)
-      ]);
-      
-      const streamableTrending = trendData.filter(m => !m.whereToWatch.includes('Unavailable'));
-      
-      setTrending(streamableTrending.length >= 5 ? streamableTrending : trendData);
-      setIndian(indianData.filter(m => !m.whereToWatch.includes('Unavailable')));
-      setGems(gemsData);
-      setRelated(relatedData);
-      setTheaters(theatersData);
-      setNewReleases(newOnOTTData);
-      setStaticLoaded(true);
+      try {
+        const [trendData, indianData, gemsData, relatedData, theatersData, newOnOTTData] = await Promise.all([
+          fetchTrending(1),
+          fetchIndianReleases(),
+          fetchByMood('thriller', 1),
+          fetchByMood('comedy', Math.floor(Math.random() * 3) + 1),
+          fetchInTheaters(),
+          fetchNewOnOTT(1)
+        ]);
+        
+        const streamableTrending = (trendData || []).filter(m => m && m.whereToWatch && !m.whereToWatch.includes('Unavailable'));
+        
+        setTrending(streamableTrending.length >= 5 ? streamableTrending : (trendData || []));
+        setIndian((indianData || []).filter(m => m && m.whereToWatch && !m.whereToWatch.includes('Unavailable')));
+        setGems(gemsData || []);
+        setRelated(relatedData || []);
+        setTheaters(theatersData || []);
+        setNewReleases(newOnOTTData || []);
 
-
-      // Check if tour has been seen
-      const hasSeenTour = localStorage.getItem('cinemood_tour_seen');
-      if (!hasSeenTour && window.innerWidth < 1024) {
-        setTimeout(() => setShowTour(true), 500);
+        // Check if tour has been seen
+        const hasSeenTour = localStorage.getItem('cinemood_tour_seen');
+        if (!hasSeenTour && window.innerWidth < 1024) {
+          setTimeout(() => setShowTour(true), 500);
+        }
+      } catch (err) {
+        console.error("Critical error in loadStatic:", err);
+      } finally {
+        setStaticLoaded(true);
       }
     };
     loadStatic();
