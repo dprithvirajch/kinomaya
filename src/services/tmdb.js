@@ -188,6 +188,16 @@ export const fetchByMood = async (mood, page = 1) => {
     else if (m.includes('smart') || m.includes('mind') || m.includes('mystery')) genreQuery = '9648,878,99';
     else if (m.includes('action')) genreQuery = '28';
     
+    if (m.includes('movie') || m.includes('movies only')) {
+      const data = await fetchFromTMDB(`/discover/movie?sort_by=popularity.desc&page=${page}&watch_region=IN&with_watch_monetization_types=flatrate|free|ads`);
+      return await formatAndEnrichTMDBResults(data.results);
+    }
+    
+    if (m.includes('binge') || m.includes('show') || m.includes('tv')) {
+      const data = await fetchFromTMDB(`/discover/tv?sort_by=popularity.desc&page=${page}&watch_region=IN&with_watch_monetization_types=flatrate|free|ads`);
+      return await formatAndEnrichTMDBResults(data.results);
+    }
+    
     if (!genreQuery) {
       // For "Surprise Me" or unmatched, mix random global trending with random regional
       const randomPage = Math.floor(Math.random() * 5) + 1;

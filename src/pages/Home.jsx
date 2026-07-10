@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../contexts/AppContext';
-import { Sparkles, Zap } from 'lucide-react';
+import { Sparkles, Zap, Brain } from 'lucide-react';
 import ContentRow from '../components/ContentRow';
 import AppTour from '../components/AppTour';
 import { fetchTrending, fetchByMood, fetchNewOnOTT, fetchByOTT, fetchHiddenGems } from '../services/tmdb';
@@ -9,6 +9,8 @@ import { trackEvent } from '../services/analytics';
 import './Home.css';
 
 const MOODS = [
+  { name: 'Movies Only', emoji: '🎬' },
+  { name: 'Binge Series', emoji: '📺' },
   { name: 'Chill', emoji: '🛋️' },
   { name: 'Intense', emoji: '😳' },
   { name: 'Funny', emoji: '🤪' },
@@ -220,7 +222,7 @@ const Home = () => {
         </div>
       </header>
 
-      <div className="vibe-toggle-container" style={{paddingBottom: 'var(--spacing-6)'}}>
+      <div className="vibe-toggle-container" style={{paddingBottom: 'var(--spacing-4)'}}>
         <div className={`vibe-toggle ${brainOff ? 'off' : 'on'}`} onClick={() => {
           if ('vibrate' in navigator) navigator.vibrate(20);
           setBrainOff(!brainOff);
@@ -228,6 +230,31 @@ const Home = () => {
           <div className="vibe-slider"></div>
           <div className={`vibe-pill ${!brainOff ? 'active' : ''}`}>🧠 Brain On</div>
           <div className={`vibe-pill ${brainOff ? 'active' : ''}`}>🍿 Brain Off</div>
+        </div>
+      </div>
+
+      {/* AI Concierge Banner */}
+      <div style={{padding: '0 var(--spacing-4)', marginBottom: 'var(--spacing-6)'}}>
+        <div 
+          onClick={() => navigate('/companion')}
+          style={{
+            background: 'linear-gradient(135deg, rgba(244, 63, 94, 0.15), rgba(6, 182, 212, 0.15))',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 'var(--radius-xl)',
+            padding: '16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            cursor: 'pointer'
+          }}
+        >
+          <div>
+            <h3 style={{fontSize: '1.1rem', fontWeight: 800, marginBottom: '4px'}}>Ask the AI Concierge</h3>
+            <p style={{fontSize: '0.8rem', color: 'var(--color-text-secondary)'}}>Not sure what to watch? Let's talk.</p>
+          </div>
+          <div style={{background: 'rgba(255,255,255,0.1)', padding: '12px', borderRadius: '50%'}}>
+            <Brain size={24} color="#38bdf8" />
+          </div>
         </div>
       </div>
 
