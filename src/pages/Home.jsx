@@ -5,7 +5,7 @@ import { Flame, Sparkles } from 'lucide-react';
 import ContentRow from '../components/ContentRow';
 import SpotlightCard from '../components/SpotlightCard';
 import AppTour from '../components/AppTour';
-import { fetchTrending, fetchByMood, fetchIndianReleases, fetchInTheaters, fetchNewOnOTT } from '../services/tmdb';
+import { fetchTrending, fetchByMood, fetchIndianReleases, fetchInTheaters, fetchNewOnOTT, fetchByOTT } from '../services/tmdb';
 import { trackEvent } from '../services/analytics';
 import './Home.css';
 
@@ -22,6 +22,15 @@ const MOODS = [
   { name: 'Surprise Me', emoji: '✨' }
 ];
 
+const OTTS = [
+  { name: 'Netflix', id: '8', color: '#E50914' },
+  { name: 'Prime', id: '119', color: '#00A8E1' },
+  { name: 'Hotstar', id: '122', color: '#113CCF' },
+  { name: 'JioCinema', id: '220', color: '#E83E8C' },
+  { name: 'SonyLiv', id: '237', color: '#F1801C' },
+  { name: 'Zee5', id: '232', color: '#8230C6' }
+];
+
 const Home = () => {
   const navigate = useNavigate();
   const { user } = useAppContext();
@@ -36,6 +45,13 @@ const Home = () => {
     return localStorage.getItem('cinemood_active_mood') || 'Surprise Me';
   });
   const [moodMovies, setMoodMovies] = useState([]);
+  
+  const [activeOTT, setActiveOTT] = useState(() => {
+    const saved = localStorage.getItem('cinemood_active_ott');
+    return saved ? JSON.parse(saved) : OTTS[0];
+  });
+  const [ottMovies, setOttMovies] = useState([]);
+  
   const [showTour, setShowTour] = useState(false);
   const [staticLoaded, setStaticLoaded] = useState(false);
   const [refreshing, setRefreshing] = useState(null);
@@ -75,6 +91,9 @@ const Home = () => {
       } else if (section === 'theaters') {
         const data = await fetchInTheaters(randomPage);
         setTheaters(data);
+      } else if (section === 'ott') {
+        const data = await fetchByOTT(activeOTT.id, randomPage);
+        setOttMovies(data);
       }
     } catch (e) {
       console.error(e);
@@ -92,14 +111,15 @@ const Home = () => {
           fetchByMood('thriller', 1),
           fetchByMood('comedy', Math.floor(Math.random() * 3) + 1),
           fetchInTheaters(),
-          fetchNewOnOTT(1)
+          fetchNewOnOTT(1),
+          fetchByOTT(activeOTT.id, 1)
         ]);
 
         const timeoutPromise = new Promise((_, reject) => 
           setTimeout(() => reject(new Error('Timeout loading recommendations')), 8000)
         );
 
-        const [trendData, indianData, gemsData, relatedData, theatersData, newOnOTTData] = await Promise.race([
+        const [trendData, indianData, gemsData, relatedData, theatersData, newOnOTTData, initialOttData] = await Promise.race([
           fetchPromise,
           timeoutPromise
         ]);
@@ -112,6 +132,7 @@ const Home = () => {
         setRelated(relatedData || []);
         setTheaters(theatersData || []);
         setNewReleases(newOnOTTData || []);
+        setOttMovies(initialOttData || []);
 
         // Check if tour has been seen
         const hasSeenTour = localStorage.getItem('cinemood_tour_seen');
@@ -135,6 +156,21 @@ const Home = () => {
     };
     loadMood();
   }, [activeMood]);
+
+  const isFirstOTTLoad = React.useRef(true);
+  useEffect(() => {
+    if (isFirstOTTLoad.current) {
+      isFirstOTTLoad.current = false;
+      return;
+    }
+    const loadOTT = async () => {
+      setRefreshing('ott');
+      const data = await fetchByOTT(activeOTT.id);
+      setOttMovies(data);
+      setRefreshing(null);
+    };
+    loadOTT();
+  }, [activeOTT]);
 
   if (!staticLoaded) {
     return (
@@ -247,6 +283,31 @@ const Home = () => {
             />
           </div>
         )}
+
+        <div className="ott-filter-section" style={{marginBottom: 'var(--spacing-6)'}}>
+          <div className="mood-scroll" style={{marginBottom: '0', paddingBottom: '0.5rem'}}>
+            {OTTS.map(ott => (
+              <button 
+                key={ott.id} 
+                className={`mood-pill ${activeOTT.id === ott.id ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveOTT(ott);
+                  localStorage.setItem('cinemood_active_ott', JSON.stringify(ott));
+                  trackEvent('OTT Filter Selected', { ott: ott.name });
+                }}
+                style={activeOTT.id === ott.id ? {background: ott.color, borderColor: ott.color, color: '#fff'} : {}}
+              >
+                {ott.name}
+              </button>
+            ))}
+          </div>
+          <ContentRow 
+            title={`Trending on ${activeOTT.name}`} 
+            items={ottMovies} 
+            onRefresh={() => handleRefresh('ott')}
+            isRefreshing={refreshing === 'ott'}
+          />
+        </div>
 
         <ContentRow 
           title="🆕 Fresh Drops this Week" 

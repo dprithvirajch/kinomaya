@@ -98,7 +98,6 @@ export const fetchIndianReleases = async (page = 1) => {
       fetchFromTMDB(`/discover/tv?with_original_language=hi|ta|te|ml|kn&sort_by=popularity.desc&page=${page}&watch_region=IN&with_watch_monetization_types=flatrate|free|ads`)
     ]);
     
-    // Mix movies and TV shows
     const mixed = [];
     const maxLen = Math.max(movies.results?.length || 0, tv.results?.length || 0);
     for (let i = 0; i < maxLen; i++) {
@@ -109,6 +108,27 @@ export const fetchIndianReleases = async (page = 1) => {
     return await formatAndEnrichTMDBResults(mixed);
   } catch (error) {
     console.error('Failed to fetch Indian releases:', error);
+    return [];
+  }
+};
+
+export const fetchByOTT = async (providerId, page = 1) => {
+  try {
+    const [movies, tv] = await Promise.all([
+      fetchFromTMDB(`/discover/movie?sort_by=popularity.desc&watch_region=IN&with_watch_providers=${providerId}&with_watch_monetization_types=flatrate&page=${page}`),
+      fetchFromTMDB(`/discover/tv?sort_by=popularity.desc&watch_region=IN&with_watch_providers=${providerId}&with_watch_monetization_types=flatrate&page=${page}`)
+    ]);
+
+    const mixed = [];
+    const maxLen = Math.max(movies.results?.length || 0, tv.results?.length || 0);
+    for (let i = 0; i < maxLen; i++) {
+      if (movies.results?.[i]) mixed.push(movies.results[i]);
+      if (tv.results?.[i]) mixed.push(tv.results[i]);
+    }
+    
+    return await formatAndEnrichTMDBResults(mixed);
+  } catch (error) {
+    console.error('Failed to fetch by OTT:', error);
     return [];
   }
 };
