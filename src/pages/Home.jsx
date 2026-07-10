@@ -76,13 +76,22 @@ const Home = () => {
   useEffect(() => {
     const loadStatic = async () => {
       try {
-        const [trendData, indianData, gemsData, relatedData, theatersData, newOnOTTData] = await Promise.all([
+        const fetchPromise = Promise.all([
           fetchTrending(1),
           fetchIndianReleases(),
           fetchByMood('thriller', 1),
           fetchByMood('comedy', Math.floor(Math.random() * 3) + 1),
           fetchInTheaters(),
           fetchNewOnOTT(1)
+        ]);
+
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Timeout loading recommendations')), 8000)
+        );
+
+        const [trendData, indianData, gemsData, relatedData, theatersData, newOnOTTData] = await Promise.race([
+          fetchPromise,
+          timeoutPromise
         ]);
         
         const streamableTrending = (trendData || []).filter(m => m && m.whereToWatch && !m.whereToWatch.includes('Unavailable'));

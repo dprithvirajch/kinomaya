@@ -14,28 +14,18 @@ export const AppProvider = ({ children }) => {
     const saved = localStorage.getItem('cinemood_user');
     return saved ? JSON.parse(saved) : {
       preferences: null,
-      stats: { streak: 4, points: 1250, moviesWatched: 12, level: '🍿 Popcorn Novice' }
+      stats: { streak: 1, points: 50, moviesWatched: 0, level: '🍿 Popcorn Novice' }
     };
   });
 
-  const [watchlist, setWatchlist] = useState([
-    {
-      id: 1,
-      title: "Dune: Part Two",
-      year: 2024,
-      poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500&auto=format&fit=crop&q=60",
-      genres: ["Sci-Fi", "Action"],
-      watched: false
-    },
-    {
-      id: 2,
-      title: "Poor Things",
-      year: 2023,
-      poster: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=500&auto=format&fit=crop&q=60",
-      genres: ["Comedy", "Drama"],
-      watched: true
-    }
-  ]);
+  const [watchlist, setWatchlist] = useState(() => {
+    const saved = localStorage.getItem('cinemood_watchlist');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('cinemood_watchlist', JSON.stringify(watchlist));
+  }, [watchlist]);
 
   // Check local storage on mount (now handled by lazy init, but kept for side-effects if needed)
   useEffect(() => {
