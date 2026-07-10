@@ -311,3 +311,38 @@
 .section-spacer {
   height: var(--spacing-8);
 }
+
+/* Mood and OTT Pills restored */
+.mood-scroll {
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+  padding: 0 var(--spacing-4);
+  scrollbar-width: none;
+}
+
+.mood-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.mood-pill {
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-surface-elevated);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mood-pill.active {
+  background: var(--color-accent-primary);
+  color: white;
+  border-color: var(--color-accent-primary);
+}

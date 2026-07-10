@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, Bookmark, User } from 'lucide-react';
+import { Home, Bookmark, User, MessageSquare } from 'lucide-react';
 import './BottomNav.css';
 
 const BottomNav = () => {
@@ -26,6 +26,14 @@ const BottomNav = () => {
         <User size={24} />
         <span>Profile</span>
       </NavLink>
+      <div 
+        className="nav-item desktop-only" 
+        onClick={() => window.open('https://tally.so/r/WOdgxL', '_blank')}
+        style={{cursor: 'pointer'}}
+      >
+        <MessageSquare size={24} />
+        <span>Feedback</span>
+      </div>
     </nav>
   );
 };

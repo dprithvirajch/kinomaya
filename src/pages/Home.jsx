@@ -4,7 +4,7 @@ import { useAppContext } from '../contexts/AppContext';
 import { Sparkles, Zap } from 'lucide-react';
 import ContentRow from '../components/ContentRow';
 import AppTour from '../components/AppTour';
-import { fetchTrending, fetchByMood, fetchNewOnOTT, fetchByOTT } from '../services/tmdb';
+import { fetchTrending, fetchByMood, fetchNewOnOTT, fetchByOTT, fetchHiddenGems } from '../services/tmdb';
 import { trackEvent } from '../services/analytics';
 import './Home.css';
 
@@ -41,6 +41,7 @@ const Home = () => {
   // Data State
   const [trending, setTrending] = useState([]);
   const [newReleases, setNewReleases] = useState([]);
+  const [gems, setGems] = useState([]);
   
   const [activeMood, setActiveMood] = useState(() => {
     return localStorage.getItem('cinemood_active_mood') || 'Surprise Me';
@@ -79,14 +80,15 @@ const Home = () => {
           fetchTrending(1, brainOff),
           fetchNewOnOTT(1, brainOff),
           fetchByMood(activeMood),
-          fetchByOTT(activeOTT.id, 1, brainOff)
+          fetchByOTT(activeOTT.id, 1, brainOff),
+          fetchHiddenGems(1) // Doesn't need brainOff filter as it's meant to be timeless cult classics
         ]);
 
         const timeoutPromise = new Promise((_, reject) => 
           setTimeout(() => reject(new Error('Timeout loading dashboard')), 8000)
         );
 
-        const [trendData, newData, moodData, ottData] = await Promise.race([
+        const [trendData, newData, moodData, ottData, gemsData] = await Promise.race([
           fetchPromise,
           timeoutPromise
         ]);
@@ -95,6 +97,7 @@ const Home = () => {
         setNewReleases(newData || []);
         setMoodMovies(moodData || []);
         setOttMovies(ottData || []);
+        setGems(gemsData || []);
 
         const hasSeenTour = localStorage.getItem('cinemood_tour_seen');
         if (!hasSeenTour && window.innerWidth < 1024) {
@@ -156,6 +159,9 @@ const Home = () => {
       } else if (section === 'ott') {
         const data = await fetchByOTT(activeOTT.id, randomPage, brainOff);
         setOttMovies(data);
+      } else if (section === 'gems') {
+        const data = await fetchHiddenGems(randomPage);
+        setGems(data);
       }
     } catch (e) {
       console.error(e);
@@ -217,7 +223,6 @@ const Home = () => {
       <div className="vibe-toggle-container" style={{paddingBottom: 'var(--spacing-6)'}}>
         <div className={`vibe-toggle ${brainOff ? 'off' : 'on'}`} onClick={() => {
           if ('vibrate' in navigator) navigator.vibrate(20);
-          setStaticLoaded(false); // Force loading screen while refetching
           setBrainOff(!brainOff);
         }}>
           <div className="vibe-slider"></div>
@@ -286,6 +291,14 @@ const Home = () => {
         items={newReleases} 
         onRefresh={() => handleRefresh('new')}
         isRefreshing={refreshing === 'new'}
+      />
+
+      {/* Hidden Gems */}
+      <ContentRow 
+        title="💎 Hidden Masterpieces" 
+        items={gems} 
+        onRefresh={() => handleRefresh('gems')}
+        isRefreshing={refreshing === 'gems'}
       />
 
       {/* Trending Tonight */}

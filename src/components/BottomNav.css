@@ -17,7 +17,7 @@
   margin: 0 auto;
 }
 
-.desktop-logo {
+.desktop-logo, .desktop-only {
   display: none;
 }
 
@@ -82,6 +82,10 @@
     background: linear-gradient(to right, #fff, #94a3b8);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+  }
+  
+  .desktop-only {
+    display: flex;
   }
   
   .nav-item {
