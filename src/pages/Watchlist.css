@@ -33,6 +33,19 @@
   .watchlist-grid {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: var(--spacing-5);
+    padding-bottom: var(--spacing-6); /* Room for hover shadow */
+  }
+
+  .watchlist-card .watchlist-poster {
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    border: 2px solid transparent;
+  }
+
+  .watchlist-card:hover .watchlist-poster {
+    transform: translateY(-10px) scale(1.08);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 0 40px rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    z-index: 10;
   }
 }
 

@@ -95,10 +95,23 @@
 @media (min-width: 1024px) {
   .content-card {
     flex: 0 0 150px;
-    width: 150px; /* Reduced from 200px to match IMDB style */
+    width: 150px;
   }
   .content-scroll {
     gap: var(--spacing-4);
+    padding: var(--spacing-2) var(--spacing-4) var(--spacing-6); /* Extra padding for hover shadow */
+  }
+
+  .content-card .poster-container {
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    border: 2px solid transparent;
+  }
+
+  .content-card:hover .poster-container {
+    transform: translateY(-10px) scale(1.08);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 0 40px rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    z-index: 10;
   }
 
   .scroll-btn {
