@@ -52,6 +52,19 @@ const Profile = () => {
       </div>
 
       <div className="profile-section">
+        <h2>App Feedback</h2>
+        <div className="feedback-card" onClick={() => window.open('https://tally.so/r/WOdgxL', '_blank')}>
+          <div className="feedback-content">
+            <h3>Help us improve!</h3>
+            <p>Tell us what you love and what we can do better.</p>
+          </div>
+          <div className="feedback-icon">
+            <MessageSquare size={24} />
+          </div>
+        </div>
+      </div>
+
+      <div className="profile-section">
         <h2>Taste Profile</h2>
         <div className="taste-summary-card">
           <p>
@@ -118,18 +131,6 @@ const Profile = () => {
         </div>
       </div>
 
-      <div className="profile-section">
-        <h2>App Feedback</h2>
-        <div className="feedback-card" onClick={() => window.open('https://tally.so/r/WOdgxL', '_blank')}>
-          <div className="feedback-content">
-            <h3>Help us improve!</h3>
-            <p>Tell us what you love and what we can do better.</p>
-          </div>
-          <div className="feedback-icon">
-            <MessageSquare size={24} />
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
