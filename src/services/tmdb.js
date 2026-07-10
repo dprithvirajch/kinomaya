@@ -45,11 +45,15 @@ const formatAndEnrichTMDBResults = async (results) => {
   return enrichedResults.filter(item => item.poster);
 };
 
-export const fetchTrending = async (page = 1) => {
+export const fetchTrending = async (page = 1, brainOff = null) => {
   try {
+    let genreFilter = '';
+    if (brainOff === true) genreFilter = '&with_genres=35|28|10751|878'; // Comedy, Action, Family, Sci-Fi
+    else if (brainOff === false) genreFilter = '&with_genres=18|53|9648|99'; // Drama, Thriller, Mystery, Doc
+
     const [movies, tv] = await Promise.all([
-      fetchFromTMDB(`/discover/movie?sort_by=popularity.desc&watch_region=IN&with_watch_monetization_types=flatrate|free|ads&page=${page}`),
-      fetchFromTMDB(`/discover/tv?sort_by=popularity.desc&watch_region=IN&with_watch_monetization_types=flatrate|free|ads&page=${page}`)
+      fetchFromTMDB(`/discover/movie?sort_by=popularity.desc&watch_region=IN&with_watch_monetization_types=flatrate|free|ads&page=${page}${genreFilter}`),
+      fetchFromTMDB(`/discover/tv?sort_by=popularity.desc&watch_region=IN&with_watch_monetization_types=flatrate|free|ads&page=${page}${genreFilter}`)
     ]);
     const mixed = [];
     const maxLen = Math.max(movies.results?.length || 0, tv.results?.length || 0);
@@ -64,7 +68,7 @@ export const fetchTrending = async (page = 1) => {
   }
 };
 
-export const fetchNewOnOTT = async (page = 1) => {
+export const fetchNewOnOTT = async (page = 1, brainOff = null) => {
   try {
     const today = new Date();
     const lastMonth = new Date();
@@ -73,13 +77,15 @@ export const fetchNewOnOTT = async (page = 1) => {
     const todayStr = today.toISOString().split('T')[0];
     const lastMonthStr = lastMonth.toISOString().split('T')[0];
 
-    // Netflix(8), Prime(119), Hotstar(122), Zee5(232), SonyLiv(237), JioCinema(220), Aha(532), Lionsgate(569)
     const providers = '8|119|122|232|237|220|532|569';
 
-    // Fetch movies and TV released in the window, available on OTT, sorted by newest first
+    let genreFilter = '';
+    if (brainOff === true) genreFilter = '&with_genres=35|28|10751|878';
+    else if (brainOff === false) genreFilter = '&with_genres=18|53|9648|99';
+
     const [movies, tv] = await Promise.all([
-      fetchFromTMDB(`/discover/movie?sort_by=primary_release_date.desc&primary_release_date.gte=${lastMonthStr}&primary_release_date.lte=${todayStr}&with_watch_providers=${providers}&watch_region=IN&with_watch_monetization_types=flatrate&vote_count.gte=1&page=${page}`),
-      fetchFromTMDB(`/discover/tv?sort_by=first_air_date.desc&first_air_date.gte=${lastMonthStr}&first_air_date.lte=${todayStr}&with_watch_providers=${providers}&watch_region=IN&with_watch_monetization_types=flatrate&vote_count.gte=1&page=${page}`)
+      fetchFromTMDB(`/discover/movie?sort_by=primary_release_date.desc&primary_release_date.gte=${lastMonthStr}&primary_release_date.lte=${todayStr}&with_watch_providers=${providers}&watch_region=IN&with_watch_monetization_types=flatrate&vote_count.gte=1&page=${page}${genreFilter}`),
+      fetchFromTMDB(`/discover/tv?sort_by=first_air_date.desc&first_air_date.gte=${lastMonthStr}&first_air_date.lte=${todayStr}&with_watch_providers=${providers}&watch_region=IN&with_watch_monetization_types=flatrate&vote_count.gte=1&page=${page}${genreFilter}`)
     ]);
 
     const mixed = [];
@@ -121,7 +127,7 @@ export const fetchIndianReleases = async (page = 1) => {
   }
 };
 
-export const fetchByOTT = async (providerId, page = 1) => {
+export const fetchByOTT = async (providerId, page = 1, brainOff = null) => {
   try {
     const today = new Date();
     const pastDate = new Date();
@@ -130,10 +136,13 @@ export const fetchByOTT = async (providerId, page = 1) => {
     const todayStr = today.toISOString().split('T')[0];
     const pastDateStr = pastDate.toISOString().split('T')[0];
 
-    // Sort by release date descending, filter by last year, require at least 1 vote to avoid garbage
+    let genreFilter = '';
+    if (brainOff === true) genreFilter = '&with_genres=35|28|10751|878';
+    else if (brainOff === false) genreFilter = '&with_genres=18|53|9648|99';
+
     const [movies, tv] = await Promise.all([
-      fetchFromTMDB(`/discover/movie?sort_by=primary_release_date.desc&primary_release_date.gte=${pastDateStr}&primary_release_date.lte=${todayStr}&watch_region=IN&with_watch_providers=${providerId}&with_watch_monetization_types=flatrate&vote_count.gte=1&page=${page}`),
-      fetchFromTMDB(`/discover/tv?sort_by=first_air_date.desc&first_air_date.gte=${pastDateStr}&first_air_date.lte=${todayStr}&watch_region=IN&with_watch_providers=${providerId}&with_watch_monetization_types=flatrate&vote_count.gte=1&page=${page}`)
+      fetchFromTMDB(`/discover/movie?sort_by=primary_release_date.desc&primary_release_date.gte=${pastDateStr}&primary_release_date.lte=${todayStr}&watch_region=IN&with_watch_providers=${providerId}&with_watch_monetization_types=flatrate&vote_count.gte=1&page=${page}${genreFilter}`),
+      fetchFromTMDB(`/discover/tv?sort_by=first_air_date.desc&first_air_date.gte=${pastDateStr}&first_air_date.lte=${todayStr}&watch_region=IN&with_watch_providers=${providerId}&with_watch_monetization_types=flatrate&vote_count.gte=1&page=${page}${genreFilter}`)
     ]);
 
     const mixed = [];
