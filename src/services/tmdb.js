@@ -114,17 +114,29 @@ export const fetchIndianReleases = async (page = 1) => {
 
 export const fetchByOTT = async (providerId, page = 1) => {
   try {
+    const today = new Date();
+    const pastDate = new Date();
+    pastDate.setDate(today.getDate() - 365); // 1 year window to ensure enough content for smaller OTTs
+    
+    const todayStr = today.toISOString().split('T')[0];
+    const pastDateStr = pastDate.toISOString().split('T')[0];
+
+    // Sort by release date descending, filter by last year, require at least 1 vote to avoid garbage
     const [movies, tv] = await Promise.all([
-      fetchFromTMDB(`/discover/movie?sort_by=popularity.desc&watch_region=IN&with_watch_providers=${providerId}&with_watch_monetization_types=flatrate&page=${page}`),
-      fetchFromTMDB(`/discover/tv?sort_by=popularity.desc&watch_region=IN&with_watch_providers=${providerId}&with_watch_monetization_types=flatrate&page=${page}`)
+      fetchFromTMDB(`/discover/movie?sort_by=primary_release_date.desc&primary_release_date.gte=${pastDateStr}&primary_release_date.lte=${todayStr}&watch_region=IN&with_watch_providers=${providerId}&with_watch_monetization_types=flatrate&vote_count.gte=1&page=${page}`),
+      fetchFromTMDB(`/discover/tv?sort_by=first_air_date.desc&first_air_date.gte=${pastDateStr}&first_air_date.lte=${todayStr}&watch_region=IN&with_watch_providers=${providerId}&with_watch_monetization_types=flatrate&vote_count.gte=1&page=${page}`)
     ]);
 
     const mixed = [];
-    const maxLen = Math.max(movies.results?.length || 0, tv.results?.length || 0);
-    for (let i = 0; i < maxLen; i++) {
-      if (movies.results?.[i]) mixed.push(movies.results[i]);
-      if (tv.results?.[i]) mixed.push(tv.results[i]);
-    }
+    if (movies.results) mixed.push(...movies.results);
+    if (tv.results) mixed.push(...tv.results);
+
+    // Ensure strict sorting by exact date (newest first)
+    mixed.sort((a, b) => {
+      const dateA = new Date(a.release_date || a.first_air_date || '2000-01-01').getTime();
+      const dateB = new Date(b.release_date || b.first_air_date || '2000-01-01').getTime();
+      return dateB - dateA;
+    });
     
     return await formatAndEnrichTMDBResults(mixed);
   } catch (error) {
