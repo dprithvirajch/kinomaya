@@ -66,3 +66,19 @@ export const getAIRecommendations = async (prompt, userContext = {}) => {
     };
   }
 };
+
+export const generateDailyEditorial = async (userContext = {}) => {
+  if (!API_KEY) return null;
+  try {
+    const prompt = `Write a compelling, editorial-style mini-article (max 35 words) for a movie discovery app based on the user's favorite genres: ${userContext?.genres?.join(', ') || 'Sci-Fi'}. It should feel like a premium magazine snippet. Return JSON format only: {"title": "Catchy Editorial Title", "content": "The 35-word paragraph."}`;
+    const result = await model.generateContent(prompt);
+    const cleanText = result.response.text().replace(/```json/gi, '').replace(/```/gi, '').trim();
+    return JSON.parse(cleanText);
+  } catch (e) {
+    console.error("Editorial Error:", e);
+    return {
+      title: "The Golden Age of Television",
+      content: "We are currently living in an era of unprecedented storytelling quality on the small screen. Dive into these character-driven masterpieces."
+    };
+  }
+};
