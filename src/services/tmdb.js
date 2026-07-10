@@ -47,10 +47,19 @@ const formatAndEnrichTMDBResults = async (results) => {
 
 export const fetchTrending = async (page = 1) => {
   try {
-    const data = await fetchFromTMDB(`/trending/all/week?page=${page}`);
-    return await formatAndEnrichTMDBResults(data.results);
+    const [movies, tv] = await Promise.all([
+      fetchFromTMDB(`/discover/movie?sort_by=popularity.desc&watch_region=IN&with_watch_monetization_types=flatrate|free|ads&page=${page}`),
+      fetchFromTMDB(`/discover/tv?sort_by=popularity.desc&watch_region=IN&with_watch_monetization_types=flatrate|free|ads&page=${page}`)
+    ]);
+    const mixed = [];
+    const maxLen = Math.max(movies.results?.length || 0, tv.results?.length || 0);
+    for (let i = 0; i < maxLen; i++) {
+      if (movies.results?.[i]) mixed.push(movies.results[i]);
+      if (tv.results?.[i]) mixed.push(tv.results[i]);
+    }
+    return await formatAndEnrichTMDBResults(mixed);
   } catch (error) {
-    console.error('Failed to fetch from TMDB:', error);
+    console.error('Failed to fetch trending:', error);
     return [];
   }
 };
@@ -145,17 +154,13 @@ export const fetchByOTT = async (providerId, page = 1) => {
   }
 };
 
-export const fetchInTheaters = async (page = 1) => {
+export const fetchHiddenGems = async (page = 1) => {
   try {
-    const data = await fetchFromTMDB(`/movie/now_playing?region=IN&page=${page}`);
-    const enriched = await formatAndEnrichTMDBResults(data.results);
-    // Force 'In Theaters' tag for these
-    return enriched.map(item => ({
-      ...item,
-      whereToWatch: item.whereToWatch[0] === 'Unavailable' ? ['In Theaters'] : item.whereToWatch
-    }));
+    // Cult classics & Oscar winners: Highly rated (7.5+), proven (1000+ votes), but not currently trending (popularity <= 35)
+    const data = await fetchFromTMDB(`/discover/movie?sort_by=vote_average.desc&vote_average.gte=7.6&vote_count.gte=1000&popularity.lte=35&watch_region=IN&with_watch_monetization_types=flatrate|free|ads&page=${page}`);
+    return await formatAndEnrichTMDBResults(data.results);
   } catch (error) {
-    console.error('Failed to fetch theaters:', error);
+    console.error('Failed to fetch hidden gems:', error);
     return [];
   }
 };

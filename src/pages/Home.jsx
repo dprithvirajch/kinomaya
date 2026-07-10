@@ -5,7 +5,7 @@ import { Flame, Sparkles } from 'lucide-react';
 import ContentRow from '../components/ContentRow';
 import SpotlightCard from '../components/SpotlightCard';
 import AppTour from '../components/AppTour';
-import { fetchTrending, fetchByMood, fetchIndianReleases, fetchInTheaters, fetchNewOnOTT, fetchByOTT } from '../services/tmdb';
+import { fetchTrending, fetchByMood, fetchIndianReleases, fetchHiddenGems, fetchNewOnOTT, fetchByOTT } from '../services/tmdb';
 import { trackEvent } from '../services/analytics';
 import './Home.css';
 
@@ -38,7 +38,6 @@ const Home = () => {
   const [indian, setIndian] = useState([]);
   const [gems, setGems] = useState([]);
   const [related, setRelated] = useState([]);
-  const [theaters, setTheaters] = useState([]);
   const [newReleases, setNewReleases] = useState([]);
   
   const [activeMood, setActiveMood] = useState(() => {
@@ -83,14 +82,11 @@ const Home = () => {
         const data = await fetchIndianReleases(randomPage);
         setIndian(data.filter(m => !m.whereToWatch.includes('Unavailable')));
       } else if (section === 'gems') {
-        const data = await fetchByMood('thriller', randomPage);
+        const data = await fetchHiddenGems(randomPage);
         setGems(data);
       } else if (section === 'laugh') {
         const data = await fetchByMood('comedy', randomPage);
         setRelated(data);
-      } else if (section === 'theaters') {
-        const data = await fetchInTheaters(randomPage);
-        setTheaters(data);
       } else if (section === 'ott') {
         const data = await fetchByOTT(activeOTT.id, randomPage);
         setOttMovies(data);
@@ -110,7 +106,7 @@ const Home = () => {
           fetchIndianReleases(),
           fetchByMood('thriller', 1),
           fetchByMood('comedy', Math.floor(Math.random() * 3) + 1),
-          fetchInTheaters(),
+          fetchHiddenGems(1),
           fetchNewOnOTT(1),
           fetchByOTT(activeOTT.id, 1)
         ]);
@@ -119,7 +115,7 @@ const Home = () => {
           setTimeout(() => reject(new Error('Timeout loading recommendations')), 8000)
         );
 
-        const [trendData, indianData, gemsData, relatedData, theatersData, newOnOTTData, initialOttData] = await Promise.race([
+        const [trendData, indianData, gemsData, relatedData, hiddenGemsData, newOnOTTData, initialOttData] = await Promise.race([
           fetchPromise,
           timeoutPromise
         ]);
@@ -128,9 +124,8 @@ const Home = () => {
         
         setTrending(streamableTrending.length >= 5 ? streamableTrending : (trendData || []));
         setIndian((indianData || []).filter(m => m && m.whereToWatch && !m.whereToWatch.includes('Unavailable')));
-        setGems(gemsData || []);
+        setGems(hiddenGemsData || []);
         setRelated(relatedData || []);
-        setTheaters(theatersData || []);
         setNewReleases(newOnOTTData || []);
         setOttMovies(initialOttData || []);
 
@@ -357,13 +352,6 @@ const Home = () => {
             isRefreshing={refreshing === 'laugh'}
           />
         </div>
-
-        <ContentRow 
-          title="🍿 Now in Theaters" 
-          items={theaters} 
-          onRefresh={() => handleRefresh('theaters')}
-          isRefreshing={refreshing === 'theaters'}
-        />
       </div>
 
       <button className="fab-ai" onClick={() => navigate('/companion')}>
