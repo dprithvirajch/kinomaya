@@ -12,10 +12,18 @@ export const AppProvider = ({ children }) => {
 
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem('cinemood_user');
-    return saved ? JSON.parse(saved) : {
-      preferences: null,
-      stats: { streak: 1, points: 50, moviesWatched: 0, level: '🍿 Popcorn Novice' }
-    };
+    const defaultStats = { streak: 1, points: 50, moviesWatched: 0, level: '🍿 Popcorn Novice' };
+    
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (!parsed.stats) parsed.stats = defaultStats;
+        return parsed;
+      } catch (e) {
+        return { preferences: null, stats: defaultStats };
+      }
+    }
+    return { preferences: null, stats: defaultStats };
   });
 
   const [watchlist, setWatchlist] = useState(() => {

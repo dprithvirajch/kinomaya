@@ -39,6 +39,16 @@ const Home = () => {
   const [showTour, setShowTour] = useState(false);
   const [staticLoaded, setStaticLoaded] = useState(false);
   const [refreshing, setRefreshing] = useState(null);
+  const [loadingTime, setLoadingTime] = useState(0);
+
+  useEffect(() => {
+    if (!staticLoaded) {
+      const interval = setInterval(() => {
+        setLoadingTime(prev => prev + 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [staticLoaded]);
 
   const handleRefresh = async (section) => {
     setRefreshing(section);
@@ -126,7 +136,47 @@ const Home = () => {
     loadMood();
   }, [activeMood]);
 
-  if (!staticLoaded) return <div className="home-container fade-in"><p style={{padding: '2rem', textAlign: 'center', color: 'var(--color-text-secondary)'}}>Loading recommendations...</p></div>;
+  if (!staticLoaded) {
+    return (
+      <div className="home-container fade-in">
+        <p style={{padding: '2rem', textAlign: 'center', color: 'var(--color-text-secondary)', marginTop: '20vh'}}>
+          Loading recommendations...
+        </p>
+        {loadingTime > 4 && (
+          <div className="fade-in" style={{textAlign: 'center', padding: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem'}}>
+            <button 
+              onClick={() => {
+                if ('serviceWorker' in navigator) {
+                  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for(let registration of registrations) {
+                      registration.unregister();
+                    }
+                  });
+                }
+                localStorage.removeItem('cinemood_user'); // Hard reset corrupted data just in case
+                window.location.reload(true);
+              }}
+              style={{
+                padding: '12px 24px', 
+                background: 'linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-secondary))', 
+                color: 'white', 
+                borderRadius: '12px',
+                border: 'none',
+                fontWeight: 'bold',
+                fontSize: '1rem',
+                cursor: 'pointer',
+                boxShadow: '0 4px 15px rgba(244, 63, 94, 0.4)'
+              }}>
+              Force Refresh App
+            </button>
+            <p style={{fontSize: '0.8rem', color: 'var(--color-text-secondary)', maxWidth: '250px'}}>
+              Tap this to clear your cache and force the latest version to load.
+            </p>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   const handleCompleteTour = () => {
     setShowTour(false);
