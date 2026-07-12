@@ -217,17 +217,16 @@ const Home = () => {
       </header>
 
       <div 
-        className="vibe-toggle-container has-tooltip" 
+        className="vibe-toggle-container" 
         style={{paddingBottom: 'var(--spacing-4)'}}
-        data-tooltip="Brain On: Deep, thought-provoking, engaging films. Brain Off: Easy, fun, popcorn entertainment."
       >
         <div className={`vibe-toggle ${brainOff ? 'off' : 'on'}`} onClick={() => {
           if ('vibrate' in navigator) navigator.vibrate(20);
           setBrainOff(!brainOff);
         }}>
           <div className="vibe-slider"></div>
-          <div className={`vibe-pill ${!brainOff ? 'active' : ''}`}>🧠 Brain On</div>
-          <div className={`vibe-pill ${brainOff ? 'active' : ''}`}>🍿 Brain Off</div>
+          <div className={`vibe-pill ${!brainOff ? 'active' : ''} has-tooltip`} data-tooltip="Deep, thought-provoking, engaging films">🧠 Brain On</div>
+          <div className={`vibe-pill ${brainOff ? 'active' : ''} has-tooltip`} data-tooltip="Easy, fun, popcorn entertainment">🍿 Brain Off</div>
         </div>
       </div>
 
