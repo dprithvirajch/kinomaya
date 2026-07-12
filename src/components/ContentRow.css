@@ -99,7 +99,8 @@
   }
   .content-scroll {
     gap: var(--spacing-4);
-    padding: var(--spacing-2) var(--spacing-4) var(--spacing-6); /* Extra padding for hover shadow */
+    padding: var(--spacing-6) var(--spacing-4) var(--spacing-6); /* Extra padding for hover shadow and lift */
+    margin-top: calc(-1 * var(--spacing-4)); /* Offset the extra top padding so the title doesn't look too far away */
   }
 
   .content-card .poster-container {
