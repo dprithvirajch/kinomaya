@@ -196,11 +196,48 @@
 
 @media (min-width: 1024px) {
   .hero-content, .detail-body {
-    max-width: 800px;
+    max-width: 1000px;
     margin: 0 auto;
+    padding-left: 0;
+    padding-right: 0;
   }
   
   .detail-hero {
-    height: 55vh;
+    height: 60vh;
+  }
+
+  .poster-thumbnail {
+    width: 220px;
+    border-width: 2px;
+  }
+
+  .hero-content {
+    align-items: flex-end;
+    gap: var(--spacing-6);
+  }
+
+  .detail-title {
+    font-size: 3rem;
+  }
+
+  .detail-meta {
+    font-size: 1rem;
+  }
+
+  .action-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--spacing-8);
+  }
+
+  .play-btn {
+    width: max-content;
+    padding: 0 48px;
+  }
+
+  .secondary-actions {
+    gap: var(--spacing-8);
+    justify-content: flex-start;
   }
 }

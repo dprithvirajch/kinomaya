@@ -126,3 +126,8 @@
   font-size: 0.9rem;
   margin-bottom: var(--spacing-6);
 }
+
+.empty-state .btn-secondary {
+  width: max-content;
+  padding: 12px 32px;
+}
