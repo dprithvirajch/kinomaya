@@ -9,8 +9,6 @@ import { trackEvent } from '../services/analytics';
 import './Home.css';
 
 const MOODS = [
-  { name: 'Movies Only', emoji: '🎬' },
-  { name: 'Binge Series', emoji: '📺' },
   { name: 'Chill', emoji: '🛋️' },
   { name: 'Intense', emoji: '😳' },
   { name: 'Funny', emoji: '🤪' },
@@ -38,7 +36,6 @@ const Home = () => {
   
   const [staticLoaded, setStaticLoaded] = useState(false);
   const [loadingTime, setLoadingTime] = useState(0);
-  const [showTour, setShowTour] = useState(false);
   
   // Data State
   const [trending, setTrending] = useState([]);
@@ -58,6 +55,9 @@ const Home = () => {
   
   // UI State
   const [brainOff, setBrainOff] = useState(false);
+  const [mediaFilter, setMediaFilter] = useState(() => {
+    return localStorage.getItem('cinemood_media_filter') || 'all'; // 'all', 'movie', 'tv'
+  });
   const [refreshing, setRefreshing] = useState(null);
   
   // Contextual Helpers
@@ -79,11 +79,11 @@ const Home = () => {
     const loadDashboard = async () => {
       try {
         const fetchPromise = Promise.all([
-          fetchTrending(1, brainOff),
-          fetchNewOnOTT(1, brainOff),
-          fetchByMood(activeMood),
-          fetchByOTT(activeOTT.id, 1, brainOff),
-          fetchHiddenGems(1) // Doesn't need brainOff filter as it's meant to be timeless cult classics
+          fetchTrending(1, brainOff, mediaFilter),
+          fetchNewOnOTT(1, brainOff, mediaFilter),
+          fetchByMood(activeMood, 1, mediaFilter),
+          fetchByOTT(activeOTT.id, 1, brainOff, mediaFilter),
+          fetchHiddenGems(1, mediaFilter) 
         ]);
 
         const timeoutPromise = new Promise((_, reject) => 
@@ -100,11 +100,6 @@ const Home = () => {
         setMoodMovies(moodData || []);
         setOttMovies(ottData || []);
         setGems(gemsData || []);
-
-        const hasSeenTour = localStorage.getItem('cinemood_tour_seen');
-        if (!hasSeenTour && window.innerWidth < 1024) {
-          setTimeout(() => setShowTour(true), 500);
-        }
       } catch (err) {
         console.error("Dashboard load error:", err);
       } finally {
@@ -112,7 +107,7 @@ const Home = () => {
       }
     };
     loadDashboard();
-  }, [brainOff]); // Re-run everything when Vibe Toggle changes
+  }, [brainOff, activeMood, activeOTT, mediaFilter]); // Re-run everything when Vibe Toggle changes
 
   // Dynamic loaders for when user taps mood/ott pills
   const isFirstMoodLoad = useRef(true);
@@ -123,7 +118,7 @@ const Home = () => {
     }
     const loadMood = async () => {
       setRefreshing('mood');
-      const data = await fetchByMood(activeMood);
+      const data = await fetchByMood(activeMood, 1, mediaFilter);
       setMoodMovies(data);
       setRefreshing(null);
     };
@@ -138,31 +133,31 @@ const Home = () => {
     }
     const loadOTT = async () => {
       setRefreshing('ott');
-      const data = await fetchByOTT(activeOTT.id, 1, brainOff);
+      const data = await fetchByOTT(activeOTT.id, 1, brainOff, mediaFilter);
       setOttMovies(data);
       setRefreshing(null);
     };
     loadOTT();
-  }, [activeOTT]); // Depends on brainOff too, but re-fetching handled by main useEffect if brainOff changes
+  }, [activeOTT]);
 
   const handleRefresh = async (section) => {
     setRefreshing(section);
     const randomPage = Math.floor(Math.random() * 5) + 2;
     try {
       if (section === 'trending') {
-        const data = await fetchTrending(randomPage, brainOff);
+        const data = await fetchTrending(randomPage, brainOff, mediaFilter);
         setTrending(data.filter(m => !m.whereToWatch?.includes('Unavailable')));
       } else if (section === 'new') {
-        const data = await fetchNewOnOTT(randomPage, brainOff);
+        const data = await fetchNewOnOTT(randomPage, brainOff, mediaFilter);
         setNewReleases(data);
       } else if (section === 'mood') {
-        const data = await fetchByMood(activeMood, randomPage);
+        const data = await fetchByMood(activeMood, randomPage, mediaFilter);
         setMoodMovies(data);
       } else if (section === 'ott') {
-        const data = await fetchByOTT(activeOTT.id, randomPage, brainOff);
+        const data = await fetchByOTT(activeOTT.id, randomPage, brainOff, mediaFilter);
         setOttMovies(data);
       } else if (section === 'gems') {
-        const data = await fetchHiddenGems(randomPage);
+        const data = await fetchHiddenGems(randomPage, mediaFilter);
         setGems(data);
       }
     } catch (e) {
@@ -208,7 +203,6 @@ const Home = () => {
 
   return (
     <div className="home-container fade-in">
-      {showTour && <AppTour onComplete={() => { setShowTour(false); localStorage.setItem('cinemood_tour_seen', 'true'); }} />}
       
       {/* Header & Vibe Check */}
       <header className="home-header-top" style={{paddingTop: 'var(--spacing-4)', paddingBottom: 'var(--spacing-4)'}}>
@@ -222,7 +216,11 @@ const Home = () => {
         </div>
       </header>
 
-      <div className="vibe-toggle-container" style={{paddingBottom: 'var(--spacing-4)'}}>
+      <div 
+        className="vibe-toggle-container" 
+        style={{paddingBottom: 'var(--spacing-4)'}}
+        title="Brain On: Deep, thought-provoking, engaging films. Brain Off: Easy, fun, popcorn entertainment."
+      >
         <div className={`vibe-toggle ${brainOff ? 'off' : 'on'}`} onClick={() => {
           if ('vibrate' in navigator) navigator.vibrate(20);
           setBrainOff(!brainOff);
@@ -230,6 +228,38 @@ const Home = () => {
           <div className="vibe-slider"></div>
           <div className={`vibe-pill ${!brainOff ? 'active' : ''}`}>🧠 Brain On</div>
           <div className={`vibe-pill ${brainOff ? 'active' : ''}`}>🍿 Brain Off</div>
+        </div>
+      </div>
+
+      {/* Media Format Filter */}
+      <div style={{padding: '0 var(--spacing-4)', marginBottom: 'var(--spacing-6)'}}>
+        <div style={{
+          display: 'flex', 
+          background: 'var(--color-bg-surface-elevated)', 
+          borderRadius: 'var(--radius-full)', 
+          padding: '4px',
+          border: '1px solid rgba(255,255,255,0.05)'
+        }}>
+          {['all', 'movie', 'tv'].map(format => (
+            <div 
+              key={format}
+              onClick={() => setMediaFilter(format)}
+              style={{
+                flex: 1,
+                textAlign: 'center',
+                padding: '8px 12px',
+                borderRadius: 'var(--radius-full)',
+                fontSize: '0.875rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                color: mediaFilter === format ? 'white' : 'var(--color-text-tertiary)',
+                background: mediaFilter === format ? 'rgba(255,255,255,0.1)' : 'transparent'
+              }}
+            >
+              {format === 'all' ? 'Everything' : format === 'movie' ? '🎬 Movies' : '📺 Shows'}
+            </div>
+          ))}
         </div>
       </div>
 
