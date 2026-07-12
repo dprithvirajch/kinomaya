@@ -217,9 +217,9 @@ const Home = () => {
       </header>
 
       <div 
-        className="vibe-toggle-container" 
+        className="vibe-toggle-container has-tooltip" 
         style={{paddingBottom: 'var(--spacing-4)'}}
-        title="Brain On: Deep, thought-provoking, engaging films. Brain Off: Easy, fun, popcorn entertainment."
+        data-tooltip="Brain On: Deep, thought-provoking, engaging films. Brain Off: Easy, fun, popcorn entertainment."
       >
         <div className={`vibe-toggle ${brainOff ? 'off' : 'on'}`} onClick={() => {
           if ('vibrate' in navigator) navigator.vibrate(20);
